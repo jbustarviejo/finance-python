@@ -22,6 +22,10 @@ class Scrap:
 
     #Save companies array in database
     def scrapCompanies(self):
+        self.scrapCompaniesList()
+
+    #Save companies list array in database
+    def scrapCompaniesList(self):
         imTheFather = True
         children = []
 
