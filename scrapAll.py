@@ -1,20 +1,18 @@
-from scrapping.ScrapSectors import ScrapSectors
-from scrapping.ScrapIndustries import ScrapIndustries
-from database.dbInsert import *
+from scrapping.Scrap import *
 
 print "--Staring scrapping script--"
 
 print "\nScrapping sectors..."
-sectors = ScrapSectors().scrapSectors()
-dbInsert().saveSectors(sectors)
-print "Finished!"
+Scrap().scrapSectors
+print "Finished sectors scrapping!"
 
 print "\nScrapping industries..."
-while(True):
-    industries = ScrapIndustries().scrapIndustries()
-    if not industries:
-        break;
-    dbInsert().saveIndustries(industries)
-print "Finished!"
+Scrap().scrapIndustries()
+print "Finished industries scrapping!"
+
+print "\nScrapping companies list..."
+Scrap().scrapCompanies()
+print "Finished companies scrapping!"
 
 print("\n--Scrapping script finished--")
+exit()

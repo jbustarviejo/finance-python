@@ -1,7 +1,7 @@
 from lxml import html
 from lxml import etree
 import requests
-from database.dbGet import *
+from database.DbGet import *
 import Settings
 
 class ScrapIndustries:
@@ -9,7 +9,7 @@ class ScrapIndustries:
 
     #Get industries array
     def scrapIndustries(self):
-        sector = dbGet().getSectorToScrap();
+        sector = DbGet().getSectorToScrap();
         #Return if not found
         if not sector:
             return False
