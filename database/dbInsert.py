@@ -40,4 +40,4 @@ class DbInsert:
             Database().runQuery(query)
         except OperationalError:
             #If lock error don't do nothing
-            #print "========Thread doing lock violantion========"
+            print "========Thread doing lock violantion========"
