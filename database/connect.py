@@ -1,7 +1,7 @@
 import mysql.connector
 
 class database:
-    def runQuery(self, query=''):
+    def runQuery(self, query='', update=False):
         config = {
           'user': 'root',
           'password': '',
@@ -16,8 +16,15 @@ class database:
 
         if query.upper().startswith('SELECT'):
             data = cursor.fetchall()   # get results from select
+            if(not data): return False
+            if update: #IF also update at the same time
+                cursor2 = conn.cursor()
+                cursor2.execute("UPDATE "+update["table"]+" SET "+update["column"]+" = NOW() WHERE id ="+str(data[0][0]))
+                conn.commit()
+                cursor2.close()
         else:
-            conn.commit()              #Commit the data
+            #Commit the data
+            conn.commit()
             data = None
 
         cursor.close()

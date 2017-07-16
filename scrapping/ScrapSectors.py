@@ -1,12 +1,12 @@
 from lxml import html
 import requests
-import Helper
+import Settings
 
 class ScrapSectors:
-    """Scrap data from FT.com"""
+    """Scrap sectors data from FT.com"""
 
     #Get sectors array
-    def scrap_sectors(self):
+    def scrapSectors(self):
         page = requests.get('https://markets.ft.com/data/sectors')
         tree = html.fromstring(page.content)
 
@@ -18,7 +18,7 @@ class ScrapSectors:
             sectorSize = matchingElement.xpath(".//td/text()")
 
             sectorInfo["sector_name"] = sectorName
-            sectorInfo["sector_link"] = Helper.rootUrl + sectorLink
+            sectorInfo["sector_slug"] = sectorName.replace(" ","-").replace("&","and");
             sectorInfo["sector_industries"] = sectorSize[0]
             sectorInfo["sector_companies"] = sectorSize[1].replace(",", "")
 
