@@ -1,6 +1,7 @@
 from scrapping.ScrapSectors import ScrapSectors
 from scrapping.ScrapIndustries import ScrapIndustries
 from scrapping.ScrapCompanies import ScrapCompanies
+from scrapping.ScrapHistory import ScrapHistory
 from database.DbInsert import *
 import Settings
 import os
@@ -20,16 +21,12 @@ class Scrap:
                 break;
             DbInsert().saveIndustries(industries)
 
-    #Save companies array in database
-    def scrapCompanies(self):
-        self.scrapCompaniesList()
-
     #Save companies list array in database
-    def scrapCompaniesList(self):
+    def scrapCompanies(self):
         imTheFather = True
         children = []
 
-        for i in range(Settings.numberOfThreads-1): #Run multiple threads
+        for i in range(Settings.numberOfThreads): #Run multiple threads
             child = os.fork()
             if child:
                 children.append(child)
@@ -40,8 +37,8 @@ class Scrap:
                 break
 
         #Father must wait to all children before continue
-        for childd in children:
-            os.waitpid(childd, 0)
+        for childP in children:
+            os.waitpid(childP, 0)
 
 
     def scrapCompaniesProcess(self):
@@ -50,3 +47,30 @@ class Scrap:
             if not companies:
                 break;
             DbInsert().saveCompanies(companies)
+
+    #Save histories from companies in database
+    def scrapHistories(self):
+        imTheFather = True
+        children = []
+
+        for i in range(Settings.numberOfThreads): #Run multiple threads
+            child = os.fork()
+            if child:
+                children.append(child)
+            else:
+                imTheFather = False
+                self.scrapHistoriesProcess()
+                os._exit(0)
+                break
+
+        #Father must wait to all children before continue
+        for childP in children:
+            os.waitpid(childP, 0)
+
+
+    def scrapHistoriesProcess(self):
+        while(True):
+            histories = ScrapHistory().scrapHistory()
+            if not histories:
+                break;
+            DbInsert().saveHistory(histories)

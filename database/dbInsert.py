@@ -40,4 +40,29 @@ class DbInsert:
             Database().runQuery(query)
         except OperationalError:
             #If lock error don't do nothing
-            print "========Thread doing lock violantion========"
+            print ""#"========Thread doing lock violantion========"
+
+    #Save company Xis array in database
+    def updateCompanyXid(self, company_id, xid):
+
+        query = "UPDATE companies SET xid = %s WHERE id = %s" % (xid, company_id)
+        try:
+            Database().runQuery(query)
+        except OperationalError:
+            #If lock error don't do nothing
+            print ""#"========Thread doing lock violantion========"
+
+    #Save history array in database
+    def saveHistory(self, histories):
+
+        valuesQuery = []
+        for history in histories:
+            valuesQuery.append("('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', NOW(), NOW())" % (history["company_id"], history["currency"], history["date"], history["open"], history["high"], history["low"], history["close"], history["volume"]) )
+
+        queryValues = ",".join(str(item) for item in valuesQuery)
+        query = "INSERT INTO histories (company_id, currency, date, open, high, low, close, volume, created_at, updated_at) VALUES %s ON DUPLICATE KEY UPDATE company_id=VALUES(company_id), currency=VALUES(currency), date=VALUES(date), open=VALUES(open), high=VALUES(high), close=VALUES(close), volume=VALUES(volume), updated_at=NOW()" % queryValues
+        try:
+            Database().runQuery(query)
+        except OperationalError:
+            #If lock error don't do nothing
+            print ""#"========Thread doing lock violantion========"
