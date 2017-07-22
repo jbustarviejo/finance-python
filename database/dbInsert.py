@@ -71,3 +71,19 @@ class DbInsert:
             print ""#"========Thread doing lock violantion========"
         except ProgrammingError:
             print "Error: "+queryValues
+
+    #Save currenciy list array in database
+    def saveCurrencies(self, currencies):
+        valuesQuery = []
+        for currency in currencies:
+            valuesQuery.append("('%s', '%s', NOW(), NOW())" % (currency["name"].replace("'","\\'"), currency["symbol"]) )
+
+        if not valuesQuery:
+            return
+        queryValues = ",".join(str(item) for item in valuesQuery)
+        query = "INSERT INTO currencies (name, symbol, created_at, updated_at) VALUES %s ON DUPLICATE KEY UPDATE symbol=VALUES(symbol), name=VALUES(name), updated_at=NOW()" % queryValues
+        try:
+            Database().runQuery(query)
+        except OperationalError:
+            #If lock error don't do nothing
+            print ""#"========Thread doing lock violantion========"

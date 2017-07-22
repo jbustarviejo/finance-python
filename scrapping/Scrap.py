@@ -2,6 +2,7 @@ from scrapping.ScrapSectors import ScrapSectors
 from scrapping.ScrapIndustries import ScrapIndustries
 from scrapping.ScrapCompanies import ScrapCompanies
 from scrapping.ScrapHistory import ScrapHistory
+from scrapping.ScrapCurrency import ScrapCurrency
 from database.DbInsert import *
 import Settings
 import os
@@ -76,3 +77,8 @@ class Scrap:
             elif histories is True:
                 continue;
             DbInsert().saveHistory(histories)
+
+    #Save currencies in database
+    def scrapCurrencies(self):
+        # ScrapCurrency().scrapCurrencyList()
+        ScrapCurrency().scrapCurrencyXid()
