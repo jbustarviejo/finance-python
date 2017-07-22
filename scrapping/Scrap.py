@@ -71,6 +71,8 @@ class Scrap:
     def scrapHistoriesProcess(self):
         while(True):
             histories = ScrapHistory().scrapHistory()
-            if not histories:
+            if histories is False:
                 break;
+            elif histories is True:
+                continue;
             DbInsert().saveHistory(histories)

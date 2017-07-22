@@ -14,9 +14,9 @@ print "--Staring scrapping script--"
 # Scrap().scrapCompanies()
 # print "Finished companies scrapping!"
 #
-print "\nScrapping companies history..."
-Scrap().scrapHistories()
-print "Finished companies history scrapping!"
+# print "\nScrapping companies history..."
+# Scrap().scrapHistories()
+# print "Finished companies history scrapping!"
 
 print("\n--Scrapping script finished--")
 exit()
