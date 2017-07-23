@@ -81,4 +81,5 @@ class Scrap:
     #Save currencies in database
     def scrapCurrencies(self):
         # ScrapCurrency().scrapCurrencyList()
-        ScrapCurrency().scrapCurrencyXid()
+        ScrapCurrency().scrapCurrencyXid(True)
+        ScrapCurrency().scrapCurrencyXid(False)

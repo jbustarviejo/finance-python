@@ -31,7 +31,7 @@ class ScrapHistory:
         else:
             print ""
 
-        if (not companyXid): return True
+        if (not companyXid or companyXid==0): return True
 
         slug = companyName.replace("&","%26")
 

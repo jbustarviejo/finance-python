@@ -32,3 +32,21 @@ class DbGet:
         if not result or not result[0]:
             return False
         return result[0]
+
+    #Get currency to scrap xid
+    def getCurrencyToScrapXidToUSD(self):
+        # Get a company that never has been updated or is NULL
+        query = "SELECT * from currencies WHERE xidToUSD IS NULL ORDER BY RAND() LIMIT 1"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
+    #Get currency to scrap xid
+    def getCurrencyToScrapXidFromUSD(self):
+        # Get a company that never has been updated or is NULL
+        query = "SELECT * from currencies WHERE xidFromUSD IS NULL ORDER BY RAND() LIMIT 1"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]

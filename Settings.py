@@ -11,4 +11,6 @@ industriesInCompaniesUrl = "http://markets.ft.com/Research/Remote/UK/BrowseCompa
 companyHistoryUrl = "https://markets.ft.com/data/chartapi/series"
 companyXidUrl = "https://markets.ft.com/data/investment-trust/tearsheet/summary"
 currencySymbolListUrl = "https://markets.ft.com/data/currencies"
+crossRateUrl = "https://markets.ft.com/data/currencies/tearsheet/summary"
+
 historyDaysToScrap = 36500 #100 years

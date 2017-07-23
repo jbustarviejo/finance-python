@@ -45,7 +45,7 @@ class DbInsert:
             #If lock error don't do nothing
             print ""#"========Thread doing lock violantion========"
 
-    #Save company Xis array in database
+    #Save company Xid array in database
     def updateCompanyXid(self, company_id, xid):
         query = "UPDATE companies SET xid = %s WHERE id = %s" % (xid, company_id)
         try:
@@ -82,6 +82,24 @@ class DbInsert:
             return
         queryValues = ",".join(str(item) for item in valuesQuery)
         query = "INSERT INTO currencies (name, symbol, created_at, updated_at) VALUES %s ON DUPLICATE KEY UPDATE symbol=VALUES(symbol), name=VALUES(name), updated_at=NOW()" % queryValues
+        try:
+            Database().runQuery(query)
+        except OperationalError:
+            #If lock error don't do nothing
+            print ""#"========Thread doing lock violantion========"
+
+    #Save currency Xid array in database
+    def updateCurrencyXidToUSD(self, currency_id, xid):
+        query = "UPDATE currencies SET xidToUSD = %s WHERE id = %s" % (xid, currency_id)
+        try:
+            Database().runQuery(query)
+        except OperationalError:
+            #If lock error don't do nothing
+            print ""#"========Thread doing lock violantion========"
+
+    #Save currency Xid array in database
+    def updateCurrencyXidFromUSD(self, currency_id, xid):
+        query = "UPDATE currencies SET xidFromUSD = %s WHERE id = %s" % (xid, currency_id)
         try:
             Database().runQuery(query)
         except OperationalError:
