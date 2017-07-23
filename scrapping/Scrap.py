@@ -80,6 +80,36 @@ class Scrap:
 
     #Save currencies in database
     def scrapCurrencies(self):
-        # ScrapCurrency().scrapCurrencyList()
+        ScrapCurrency().scrapCurrencyList()
         ScrapCurrency().scrapCurrencyXid(True)
         ScrapCurrency().scrapCurrencyXid(False)
+        self.scrapCurrencyHistories()
+
+    #Save histories from currencies in database
+    def scrapCurrencyHistories(self):
+        imTheFather = True
+        children = []
+
+        for i in range(Settings.numberOfThreads): #Run multiple threads
+            child = os.fork()
+            if child:
+                children.append(child)
+            else:
+                imTheFather = False
+                self.scrapCurrenciesHistoriesProcess()
+                os._exit(0)
+                break
+
+        #Father must wait to all children before continue
+        for childP in children:
+            os.waitpid(childP, 0)
+
+
+    def scrapCurrenciesHistoriesProcess(self):
+        while(True):
+            histories = ScrapCurrency().scrapCurrencyHistory()
+            if histories is False:
+                break;
+            elif histories is True:
+                continue;
+            DbInsert().saveCurrencyHistory(histories)

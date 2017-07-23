@@ -105,3 +105,21 @@ class DbInsert:
         except OperationalError:
             #If lock error don't do nothing
             print ""#"========Thread doing lock violantion========"
+
+    #Save currency history array in database
+    def saveCurrencyHistory(self, histories):
+        valuesQuery = []
+        for history in histories:
+            valuesQuery.append("('%s', '%s', '%s', NOW(), NOW())" % (history["currency_id"], history["date"], history["price"]) )
+
+        if not valuesQuery:
+            return
+        queryValues = ",".join(str(item) for item in valuesQuery)
+        query = "INSERT INTO currencyHistoryToUSD (currency_id, date, price, created_at, updated_at) VALUES %s ON DUPLICATE KEY UPDATE currency_id=VALUES(currency_id), date=VALUES(date), price=VALUES(price), updated_at=NOW()" % queryValues
+        try:
+            Database().runQuery(query)
+        except OperationalError:
+            #If lock error don't do nothing
+            print "###"#"========Thread doing lock violantion========"
+        except ProgrammingError:
+            print "Error: "+queryValues

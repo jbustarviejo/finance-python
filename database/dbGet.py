@@ -50,3 +50,13 @@ class DbGet:
         if not result or not result[0]:
             return False
         return result[0]
+
+    #Get currency to scrap
+    def getCurrencyToScrap(self):
+        # Get a company that never has been updated or is NULL
+        query = "SELECT * from currencies WHERE (last_full_update IS NULL OR last_full_update > NOW() + INTERVAL " + str(Settings.maxTimeForUpdateDB) + " HOUR) ORDER BY RAND() LIMIT 1"
+        update = {"table": "currencies", "column": "last_full_update"} #Block the column for not being update in multithread cases
+        result = Database().runQuery(query, update)
+        if not result or not result[0]:
+            return False
+        return result[0]

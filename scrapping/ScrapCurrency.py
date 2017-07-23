@@ -82,3 +82,57 @@ class ScrapCurrency:
                 DbInsert().updateCurrencyXidToUSD(currency[0], xid)
             else:
                 DbInsert().updateCurrencyXidFromUSD(currency[0], xid)
+
+    #Get companies list array
+    def scrapCurrencyHistory(self):
+        currency = DbGet().getCurrencyToScrap();
+
+        #Return false if not found
+        if not currency:
+            return False
+
+        currencyId = currency[0]
+        currencyName = currency[1]
+
+        print "->Scrapping currency: " + currencyName,
+
+        currencyToUSD = True
+        if (currency[3] == 0):
+            currencyToUSD = False
+            currencyXid = currency[4] #currencyXidFromUSD
+            print "from USD",
+        else:
+            currencyXid = currency[3] #currencyXidToUSD
+            print "to USD",
+
+        payload = {"days":Settings.historyDaysToScrap,"dataNormalized":False,"dataPeriod":"Day","dataInterval":1,"endOffsetDays":0,"exchangeOffset":0,"realtime":False,"yFormat":"0.###","timeServiceFormat":"JSON","rulerIntradayStart":26,"rulerIntradayStop":3,"rulerInterdayStart":10957,"rulerInterdayStop":365,"returnDateType":"ISO8601","elements":[{"Label":"d475c065","Type":"price","Symbol":str(currencyXid),"OverlayIndicators":[],"Params":{}},{"Label":"079e5104","Type":"volume","Symbol":str(currencyXid),"OverlayIndicators":[],"Params":{}}]}
+
+        headers = {"Content-Type": "application/json","Content-Length": "999999"}
+
+        page = requests.post(Settings.currencyHistoryUrl, data=json.dumps(payload), headers=headers)
+        parsedJson=json.loads(page.content);
+
+        history = []
+
+        if(parsedJson and parsedJson["Elements"] and parsedJson["Elements"][0]["ComponentSeries"][3]["Values"]):
+
+            dates = parsedJson["Dates"]
+            closePrice = parsedJson["Elements"][0]["ComponentSeries"][3]["Values"]
+
+            for i in range(len(dates)):
+              historyValues = {}
+
+              historyValues["currency_id"] = currencyId
+              historyValues["date"] = dates[i]
+
+              if (currencyToUSD is True):
+                  historyValues["price"] = closePrice[i]
+              else:
+                  historyValues["price"] = 1/closePrice[i]
+
+              history.append(historyValues)
+            print ""
+        else:
+            print "- No history"
+
+        return history
