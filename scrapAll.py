@@ -3,7 +3,7 @@ from scrapping.Scrap import *
 print "--Staring scrapping script--"
 
 print "\nScrapping sectors..."
-Scrap().scrapSectors
+Scrap().scrapSectors()
 print "Finished sectors scrapping!"
 
 print "\nScrapping industries..."
