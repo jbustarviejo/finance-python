@@ -1,7 +1,9 @@
 from analysis.CompanyAnalysis import *
 
 print "--Staring analysis script--"
-predictCompany(24)
+predictions = []
+for i in xrange(0, 10)
+    predictions.append(predictCompany(i))
 
 print("--Analysis script finished--")
 exit()

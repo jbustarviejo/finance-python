@@ -49,7 +49,7 @@ def predictCompany(company_id):
 
         predictions.append(testPrediction(x, y))
 
-    print np.average(predictions)
+    ###print np.average(predictions)
     return
 
 
