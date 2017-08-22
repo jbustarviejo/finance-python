@@ -20,14 +20,15 @@ class ScrapHistory:
         companyName = company[2]
         companySymbol = company[3]
         companyXid = company[4]
+        companyCurrency = company[5]
 
         print "->Scrapping company: " + companyName,
 
-        if (not companyXid):
-            print "(xid)"
+        if (not companyXid or not companyCurrency):
+            print "(xid-curr)"
             xidLink = Settings.companyXidUrl + "?s=" + companySymbol
-            companyXid = self.scrapCompanyXid(xidLink)
-            DbInsert().updateCompanyXid(companyId, companyXid)
+            companyXidAndCurrency = self.scrapCompanyXidAndCurrency(xidLink)
+            DbInsert().updateCompanyXidAndCurrency(companyId, companyXidAndCurrency)
         else:
             print ""
 
@@ -38,7 +39,7 @@ class ScrapHistory:
         return self.scrapHistoryValues(companyId, companyXid)
 
     #iterate over history
-    def scrapCompanyXid(self, link):
+    def scrapCompanyXidAndCurrency(self, link):
         page = requests.get(link)
         tree = html.fromstring(page.content)
 
@@ -49,10 +50,15 @@ class ScrapHistory:
         jsonScript = json.loads(matchingElement[0].attrib['data-mod-config'])
 
         xid = jsonScript["xid"]
-        if (not xid):
+        currency = jsonScript["currency"]
+        if (not xid or not currency):
             return False
 
-        return xid
+        values = {}
+        values["xid"] = xid
+        values["currency"] = currency
+
+        return values
 
 
     #iterate over history

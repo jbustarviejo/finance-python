@@ -3,14 +3,16 @@ import numpy as np
 from sklearn.svm import SVR
 
 def predictCompany(company_id):
-    numberOfDaysSample = 100;
+    #Config
+    numberOfDaysSample = 5;
     #outputLength=1
     #numberOfTestVectors=1
     numberOfTrainVectors = 40;
     repeats = 100;
-    data = DbGet().getHistoryInUSD(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
-    if len(data) < numberOfDaysSample + numberOfTrainVectors + repeats - 1:
-        print "Not enough length"
+
+    data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
+    if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats - 1:
+        #print "Not enough length"
         return
 
     data = [s[0] for s in data if s[0]] #Transform tuples to int array
@@ -49,9 +51,7 @@ def predictCompany(company_id):
 
         predictions.append(testPrediction(x, y))
 
-    ###print np.average(predictions)
-    return
-
+    return np.average(predictions)
 
 def testPrediction(X, Y):
         #Train

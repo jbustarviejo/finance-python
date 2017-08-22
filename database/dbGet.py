@@ -65,10 +65,28 @@ class DbGet:
 
     #--------Get to be analyzed--------
 
-    #Get history of a company by its id
+    #Get history of a company in USD by its id
     def getHistoryInUSD(self, company_id, limit):
         # Get company history in USD
         query = "SELECT * from (SELECT ROUND(IF(currency = 'USD', histories.open, histories.open * currencyHistoryToUSD.price),3) as conversion FROM histories left join currencies on currencies.symbol = histories.currency left JOIN currencyHistoryToUSD ON (currencies.id = currencyHistoryToUSD.currency_id AND currencyHistoryToUSD.date = histories.date) WHERE company_id = '%s' ORDER BY histories.date ASC LIMIT %s) as query where conversion is not null" % (company_id, limit)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    #Get history of a company by its id
+    def getHistory(self, company_id, limit):
+        # Get company history in USD
+        query = "SELECT * from (SELECT histories.open as conversion FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' ORDER BY histories.date ASC LIMIT %s) as query where conversion is not null" % (company_id, limit)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    #Get company
+    def getCompaniesByCurrency(self, currencySymbol):
+        # Get company history in USD
+        query = "SELECT id, currency FROM companies WHERE currency = '%s'" % (currencySymbol)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
