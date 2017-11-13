@@ -1,20 +1,12 @@
-from analysis.CompanyAnalysis import *
-import numpy as np
-from database.DbGet import *
+from analysis.Analize import *
 
 print "--Staring analysis script--"
-predictions = []
 
-print DbGet().getCompaniesByCurrency("USD");
+#companies = DbGet().getCompaniesByCurrency(["USD", "JPY"]);
+#print companies
+#optParams = optParamsSVR(9999)
+Analize().analizeSVRCompanies()
 
-exit
-for i in xrange(0, 50000):
-    prediction = predictCompany(i)
-    if prediction:
-        predictions.append(prediction)
-    if i>0 and i%10==0:
-        print np.average(predictions)
-
-print np.average(predictions)
 print("--Analysis script finished--")
+
 exit()

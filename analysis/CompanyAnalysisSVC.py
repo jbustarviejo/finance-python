@@ -1,8 +1,43 @@
 from database.DbGet import *
 import numpy as np
-from sklearn.svm import SVR
+import operator
+from sklearn.svm import SVC
 
-def predictCompany(company_id):
+def optParamsSVC(companies):
+    predictions = []
+    for kernel in ["linear", "rbf", "sigmoid"]: #"poly",
+        print "---------- Kernel: "+kernel+" ----------"
+        for shrinking in [True, False]:
+            print "---------- Shrinking: "+str(shrinking)+" ----------"
+            for C in range(1,100,5):
+                print "---------- C: %f ----------" % (float(C/10))
+                prediction = {}
+                prediction["rate"] = getPredictionRate(companies, kernel, shrinking, C);
+                prediction["kernel"] = kernel;
+                prediction["C"] = C;
+                predictions.append(prediction);
+    # print predictions
+    #Get the maximun and minimun value
+    maxIndex, maxValue = max(enumerate(predictions), key=operator.itemgetter(0))
+    minIndex, minValue = min(enumerate(predictions), key=operator.itemgetter(0))
+    #Return result
+    result = {}
+    result["max"] = maxValue
+    result["min"] = minValue
+    return result
+
+def getPredictionRate(companies, kernel, shrinking, C):
+    predictions = []
+    for i in xrange(0, len(companies)):
+        prediction = predictCompany(companies[i][0], kernel, shrinking, C)
+        if prediction:
+            predictions.append(prediction)
+        if i>0 and i%10==0:
+            print str(i*100/len(companies)) + "%: prediction " + str(np.average(predictions))
+
+    return np.average(predictions)
+
+def predictCompany(company_id, kernel, shrinking, C):
     #Config
     numberOfDaysSample = 5;
     #outputLength=1
@@ -49,11 +84,11 @@ def predictCompany(company_id):
         ###print "x=" + str(x)
         ###print "y=" + str(y)
 
-        predictions.append(testPrediction(x, y))
+        predictions.append(testPrediction(x, y, kernel, shrinking, C))
 
     return np.average(predictions)
 
-def testPrediction(X, Y):
+def testPrediction(X, Y, kernel, shrinking, C):
         #Train
         x_train = np.asarray(X[:-1])
         y_train = np.asarray(Y[:-1])
@@ -66,7 +101,8 @@ def testPrediction(X, Y):
 
         import warnings
         warnings.filterwarnings('ignore')
-        predictions = SVR().fit(x_train, y_train).predict(x_test)
+        predictions = C
+        #predictions = SVC(kernel, shrinking=shrinking, C=C).fit(x_train, y_train).predict(x_test)
 
         ### print "x_train=" + str(x_train)
         ### print "y_train=" + str(y_train)

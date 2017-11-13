@@ -10,8 +10,8 @@ class ScrapHistory:
     """Scrap history from companies from FT.com"""
 
     #Get companies list array
-    def scrapHistory(self):
-        company = DbGet().getCompanyToScrap();
+    def scrapHistory(self, currency = None):
+        company = DbGet().getCompanyToScrap(currency);
         #Return false if not found
         if not company:
             return False

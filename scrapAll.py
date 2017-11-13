@@ -15,7 +15,8 @@ Scrap().scrapCompanies()
 print "Finished companies scrapping!"
 
 print "\nScrapping companies history..."
-Scrap().scrapHistories()
+#Scrap().scrapHistories() #Scrap all histories
+Scrap().scrapHistories("EUR") #Scrap EUR histories
 print "Finished companies history scrapping!"
 
 print "\nScrapping currencies..."

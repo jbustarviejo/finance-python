@@ -26,9 +26,14 @@ class DbGet:
         return result[0]
 
     #Get company to scrap
-    def getCompanyToScrap(self):
+    def getCompanyToScrap(self, currency = None):
         # Get a company that never has been updated or is NULL
-        query = "SELECT * from companies WHERE (last_full_update IS NULL OR last_full_update < NOW() - INTERVAL " + str(Settings.maxTimeForUpdateDB) + " HOUR) ORDER BY RAND() LIMIT 1"
+
+        filterByCurrency = "" #Filter by currency?
+        if type(currency) is not None:
+            filterByCurrency = "AND currency='"+currency+"'"
+
+        query = "SELECT * from companies WHERE (last_full_update IS NULL OR last_full_update < NOW() - INTERVAL " + str(Settings.maxTimeForUpdateDB) + " HOUR) %s ORDER BY RAND() LIMIT 1" % (filterByCurrency)
         update = {"table": "companies", "column": "last_full_update"} #Block the column for not being update in multithread cases
         result = Database().runQuery(query, update)
         if not result or not result[0]:
@@ -65,6 +70,14 @@ class DbGet:
 
     #--------Get to be analyzed--------
 
+    #Get history to optimize SVR
+    def getCompanyToOptSVR(self):
+        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVR on companiesSVR.company_id = companies.id WHERE (companiesSVR.company_id IS NULL) ORDER BY RAND() LIMIT 1"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
     #Get history of a company in USD by its id
     def getHistoryInUSD(self, company_id, limit):
         # Get company history in USD
@@ -83,10 +96,27 @@ class DbGet:
             return False
         return result
 
-    #Get company
-    def getCompaniesByCurrency(self, currencySymbol):
+    #Get companies by currencies
+    def getCompaniesByCurrency(self, currencySymbols):
         # Get company history in USD
-        query = "SELECT id, currency FROM companies WHERE currency = '%s'" % (currencySymbol)
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in xrange(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = "IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = "IN ('"+currencySymbols+"')"
+
+        query = "SELECT id FROM companies WHERE currency %s" % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    #Get companies by symbol like
+    def getCompaniesBySymbolLike(self, symbolLike):
+        # Get company history in USD
+        query = "SELECT id FROM companies WHERE symbol LIKE '%s'" % (symbolLike)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False

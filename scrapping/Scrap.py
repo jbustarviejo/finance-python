@@ -50,7 +50,7 @@ class Scrap:
             DbInsert().saveCompanies(companies)
 
     #Save histories from companies in database
-    def scrapHistories(self):
+    def scrapHistories(self, currency = None):
         imTheFather = True
         children = []
 
@@ -60,7 +60,7 @@ class Scrap:
                 children.append(child)
             else:
                 imTheFather = False
-                self.scrapHistoriesProcess()
+                self.scrapHistoriesProcess(currency)
                 os._exit(0)
                 break
 
@@ -69,9 +69,9 @@ class Scrap:
             os.waitpid(childP, 0)
 
 
-    def scrapHistoriesProcess(self):
+    def scrapHistoriesProcess(self, currency):
         while(True):
-            histories = ScrapHistory().scrapHistory()
+            histories = ScrapHistory().scrapHistory(currency)
             if histories is False:
                 break;
             elif histories is True:
