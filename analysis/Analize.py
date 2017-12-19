@@ -1,4 +1,5 @@
 from analysis.CompanyAnalysisSVR import *
+from analysis.CompanyAnalysisSVC import *
 import numpy as np
 from database.DbGet import *
 from database.DbInsert import *
@@ -7,8 +8,8 @@ import os
 
 class Analize:
 
-    #Save companies list array in database
-    def analizeSVRCompanies(self):
+    #Analyzes companies list array in database
+    def analizeSVRAndSVCCompanies(self, currency):
         imTheFather = True
         children = []
 
@@ -18,7 +19,7 @@ class Analize:
                 children.append(child)
             else:
                 imTheFather = False
-                self.analizeSVRAndSVRRCompaniesProcess()
+                self.analizeSVRAndSVCCompaniesProcess(currency)
                 os._exit(0)
                 break
 
@@ -27,9 +28,11 @@ class Analize:
             os.waitpid(childP, 0)
 
 
-    def analizeSVRAndSVRRCompaniesProcess(self):
+    def analizeSVRAndSVCCompaniesProcess(self, currency):
         while(True):
-            company = DbGet().getCompanyToOptSVR();
+            company = DbGet().getCompanyToOptSVR(currency);
+
+            #SVR and SVRR
             optParams = optParamsSVR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 continue
@@ -41,3 +44,16 @@ class Analize:
                 continue
             DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
             print "Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%"
+
+            #SVC and SVCR
+            optParams = optParamsSVC(company)
+            if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
+                continue
+            DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
+            print "Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%"
+
+            optParams = optParamsSVCR(company)
+            if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
+                continue
+            DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
+            print "Company: "+str(company)+" M:"+s

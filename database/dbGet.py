@@ -71,8 +71,20 @@ class DbGet:
     #--------Get to be analyzed--------
 
     #Get history to optimize SVR
-    def getCompanyToOptSVR(self):
-        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVR on companiesSVR.company_id = companies.id WHERE (companiesSVR.company_id IS NULL) ORDER BY RAND() LIMIT 1"
+    def getCompanyToOptSVR(self, currency):
+        if type(currency) is not None:
+            currencyFilter = " AND currency = '"+currency+"'"
+        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVR on companiesSVR.company_id = companies.id WHERE (companiesSVR.company_id IS NULL %s) ORDER BY RAND() LIMIT 1" % (currencyFilter)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
+    #Get history to optimize SVR
+    def getCompanyToOptSVC(self, currency):
+        if type(currency) is not None:
+            currencyFilter = " AND currency = '"+currency+"'"
+        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVC on companiesSVC.company_id = companies.id WHERE (companiesSVC.company_id IS NULL %s) ORDER BY RAND() LIMIT 1" % (currencyFilter)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False

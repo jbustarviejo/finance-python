@@ -5,45 +5,91 @@ from sklearn.svm import SVC
 
 def optParamsSVC(companies):
     predictions = []
-    for kernel in ["linear", "rbf", "sigmoid"]: #"poly",
-        print "---------- Kernel: "+kernel+" ----------"
-        for shrinking in [True, False]:
-            print "---------- Shrinking: "+str(shrinking)+" ----------"
-            for C in range(1,100,5):
-                print "---------- C: %f ----------" % (float(C/10))
-                prediction = {}
-                prediction["rate"] = getPredictionRate(companies, kernel, shrinking, C);
-                prediction["kernel"] = kernel;
-                prediction["C"] = C;
-                predictions.append(prediction);
-    # print predictions
+    for kernel in ["linear", "rbf", "sigmoid"]:
+        for numberOfDaysSample in [100, 500, 1000]:
+            for numberOfTrainVectors in [100, 200, 500]:
+                for repeats in [200]:
+                    print "- Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
+                    prediction = {}
+                    rate = getPredictionRate(companies, False, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
+                    if rate is None:
+                        continue
+                    prediction["rate"] = rate
+                    prediction["kernel"] = kernel;
+                    prediction["numberOfDaysSample"] = numberOfDaysSample;
+                    prediction["numberOfTrainVectors"] = numberOfTrainVectors;
+                    prediction["repeats"] = repeats;
+                    predictions.append(prediction);
+    #print predictions
     #Get the maximun and minimun value
-    maxIndex, maxValue = max(enumerate(predictions), key=operator.itemgetter(0))
-    minIndex, minValue = min(enumerate(predictions), key=operator.itemgetter(0))
+    if not predictions or len(predictions) <1:
+        return None
     #Return result
-    result = {}
-    result["max"] = maxValue
-    result["min"] = minValue
+    result = getMaxAndMin(predictions)
     return result
 
-def getPredictionRate(companies, kernel, shrinking, C):
+def optParamsSVCR(companies): #Opt SVC with profibility
     predictions = []
-    for i in xrange(0, len(companies)):
-        prediction = predictCompany(companies[i][0], kernel, shrinking, C)
-        if prediction:
-            predictions.append(prediction)
-        if i>0 and i%10==0:
-            print str(i*100/len(companies)) + "%: prediction " + str(np.average(predictions))
+    for kernel in ["linear", "rbf", "sigmoid"]:
+        for numberOfDaysSample in [100, 500, 1000]:
+            for numberOfTrainVectors in [100, 200, 500]:
+                for repeats in [200]:
+                    print "- Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
+                    prediction = {}
+                    rate = getPredictionRate(companies, True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
+                    if rate is None:
+                        continue
+                    prediction["rate"] = rate
+                    prediction["kernel"] = kernel;
+                    prediction["numberOfDaysSample"] = numberOfDaysSample;
+                    prediction["numberOfTrainVectors"] = numberOfTrainVectors;
+                    prediction["repeats"] = repeats;
+                    predictions.append(prediction);
+    #print predictions
+    #Get the maximun and minimun value
+    if not predictions or len(predictions) <1:
+        return None
+    #Return result
+    result = getMaxAndMin(predictions)
+    return result
 
-    return np.average(predictions)
+def getMaxAndMin(predictions):
+    max = predictions[0]
+    min = predictions[0]
+    for i in xrange(1, len(predictions)):
+        if predictions[i]["rate"] is None:
+            continue
+        if max["rate"] < predictions[i]["rate"]:
+            max = predictions[i]
+        if min["rate"] > predictions[i]["rate"]:
+            min = predictions[i]
 
-def predictCompany(company_id, kernel, shrinking, C):
+    result = {}
+    result["max"] = max
+    result["min"] = min
+    return result;
+
+
+def getPredictionRate(companies, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
+    predictions = []
+    if len(companies) == 1:
+        prediction = predictCompany(companies[0], profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats)
+        print "Prediction " + str(prediction) + "%"
+        return prediction
+    else:
+        for i in xrange(0, len(companies)):
+            prediction = predictCompany(companies[i][0], kernel)
+            if prediction:
+                predictions.append(prediction)
+            if i>0 and i%10==0:
+                print str(i*100/len(companies)) + "%: prediction " + str(np.average(predictions))
+
+                return np.average(predictions)
+
+def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
     #Config
-    numberOfDaysSample = 5;
     #outputLength=1
     #numberOfTestVectors=1
-    numberOfTrainVectors = 40;
-    repeats = 100;
 
     data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
     if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats - 1:
@@ -51,7 +97,14 @@ def predictCompany(company_id, kernel, shrinking, C):
         return
 
     data = [s[0] for s in data if s[0]] #Transform tuples to int array
-    ##print "data=" + str(data);
+    # print "data=" + str(data);
+
+    if profibility is True:
+        for k in reversed(xrange(1,len(data))):
+            data[k] = data[k]/data[k-1]
+
+        data[0] = 1
+        # print "data2=" + str(data);
 
     #Give format to Y and X in chunks
     X = []
@@ -84,11 +137,11 @@ def predictCompany(company_id, kernel, shrinking, C):
         ###print "x=" + str(x)
         ###print "y=" + str(y)
 
-        predictions.append(testPrediction(x, y, kernel, shrinking, C))
+        predictions.append(testPrediction(x, y, kernel))
 
     return np.average(predictions)
 
-def testPrediction(X, Y, kernel, shrinking, C):
+def testPrediction(X, Y, kernel):
         #Train
         x_train = np.asarray(X[:-1])
         y_train = np.asarray(Y[:-1])
@@ -101,8 +154,7 @@ def testPrediction(X, Y, kernel, shrinking, C):
 
         import warnings
         warnings.filterwarnings('ignore')
-        predictions = C
-        #predictions = SVC(kernel, shrinking=shrinking, C=C).fit(x_train, y_train).predict(x_test)
+        predictions = SVC(kernel=kernel).fit(x_train, y_train).predict(x_test)
 
         ### print "x_train=" + str(x_train)
         ### print "y_train=" + str(y_train)
