@@ -3,7 +3,7 @@ from scrapping.ScrapIndustries import ScrapIndustries
 from scrapping.ScrapCompanies import ScrapCompanies
 from scrapping.ScrapHistory import ScrapHistory
 from scrapping.ScrapCurrency import ScrapCurrency
-from database.DbInsert import *
+from database.dbInsert import *
 import Settings
 import os
 

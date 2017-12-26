@@ -1,4 +1,4 @@
-from Connect import Database
+from database.connect import Database
 import Settings
 
 class DbGet:
@@ -80,16 +80,6 @@ class DbGet:
             return False
         return result[0]
 
-    #Get history to optimize SVR
-    def getCompanyToOptSVC(self, currency):
-        if type(currency) is not None:
-            currencyFilter = " AND currency = '"+currency+"'"
-        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVC on companiesSVC.company_id = companies.id WHERE (companiesSVC.company_id IS NULL %s) ORDER BY RAND() LIMIT 1" % (currencyFilter)
-        result = Database().runQuery(query)
-        if not result or not result[0]:
-            return False
-        return result[0]
-
     #Get history of a company in USD by its id
     def getHistoryInUSD(self, company_id, limit):
         # Get company history in USD
@@ -113,7 +103,7 @@ class DbGet:
         # Get company history in USD
         inQuery = ""
         if type(currencySymbols) is list:
-            for i in xrange(0, len(currencySymbols)):
+            for i in range(0, len(currencySymbols)):
                 inQuery+="'"+currencySymbols[i]+"',"
             inQuery = "IN ("+inQuery[:-1]+")"
         else:

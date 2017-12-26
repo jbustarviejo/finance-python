@@ -1,4 +1,5 @@
-from database.DbGet import *
+from database.dbGet import *
+
 import numpy as np
 import operator
 from sklearn.svm import SVR
@@ -9,7 +10,7 @@ def optParamsSVR(companies):
         for numberOfDaysSample in [122, 244, 488, 1220]:
             for numberOfTrainVectors in [122, 244, 488, 1220]:
                 for repeats in [244]:
-                    print "SVR - "+str(companies)+" - Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
+                    print ("SVR - "+str(companies)+" - Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
                     rate = getPredictionRate(companies, False, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
@@ -34,7 +35,7 @@ def optParamsSVRR(companies): #Opt SVR with profibility
         for numberOfDaysSample in [122, 244, 488, 1220]:
             for numberOfTrainVectors in [122, 244, 488, 1220]:
                 for repeats in [244]:
-                    print "SVRR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
+                    print ("SVRR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
                     rate = getPredictionRate(companies, True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
@@ -56,7 +57,7 @@ def optParamsSVRR(companies): #Opt SVR with profibility
 def getMaxAndMin(predictions):
     max = predictions[0]
     min = predictions[0]
-    for i in xrange(1, len(predictions)):
+    for i in range(1, len(predictions)):
         if predictions[i]["rate"] is None:
             continue
         if max["rate"] < predictions[i]["rate"]:
@@ -69,20 +70,19 @@ def getMaxAndMin(predictions):
     result["min"] = min
     return result;
 
-
 def getPredictionRate(companies, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
     predictions = []
     if len(companies) == 1:
         prediction = predictCompany(companies[0], profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats)
-        print "Prediction " + str(prediction) + "%"
+        print ("Prediction " + str(prediction) + "%")
         return prediction
     else:
-        for i in xrange(0, len(companies)):
+        for i in range(0, len(companies)):
             prediction = predictCompany(companies[i][0], kernel)
             if prediction:
                 predictions.append(prediction)
             if i>0 and i%10==0:
-                print str(i*100/len(companies)) + "%: prediction " + str(np.average(predictions))
+                print (str(i*100/len(companies)) + "%: prediction " + str(np.average(predictions)))
 
                 return np.average(predictions)
 
@@ -93,14 +93,14 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
 
     data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
     if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats - 1:
-        #print "Not enough length"
+        #print ("Not enough length")
         return
 
     data = [s[0] for s in data if s[0]] #Transform tuples to int array
-    # print "data=" + str(data);
+    # print ("data=" + str(data))
 
     if profibility is True:
-        for k in reversed(xrange(1,len(data))):
+        for k in reversed(range(1,len(data))):
             data[k] = data[k]/data[k-1]
 
         data[0] = 1
@@ -109,19 +109,18 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
     #Give format to Y and X in chunks
     X = []
     Y = []
-    for j in xrange(0, len(data) - numberOfDaysSample + 1):
+    for j in range(0, len(data) - numberOfDaysSample + 1):
         chunk = data[j : j+numberOfDaysSample]
         X.append(chunk[:-1])
         Y.append(chunk[-1])
 
-    ###print "X0=" + str(np.asarray(X))
-    ###print "Y0=" + str(np.asarray(Y))
-    ###print ""
+    # print ("X0=" + str(np.asarray(X)))
+    # print ("Y0=" + str(np.asarray(Y)))
 
     #Iterate to get average result
     predictions=[]
-    for i in xrange(0, repeats):
-        ###print "--------------iter:"+str(i)
+    for i in range(0, repeats):
+        #print "--------------iter:"+str(i)
         finalPos = i+1-repeats
         if finalPos != 0:
             x = np.asarray(X[i:finalPos])
@@ -130,17 +129,17 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
             x = np.asarray(X[i:])
             y = np.asarray(Y[i:])
 
-        # initialValue = x[0][0] #Get profibility
-        # #TODO: LOLOLOLOLOLO. Review this normalization. It's like not doing nothing
-        #
-        # x = x/initialValue
-        # y = y/initialValue
+        # print ("x="+str(x))
+        # print ("y="+str(y))
 
         predictions.append(testPrediction(x, y, kernel))
 
     return np.average(predictions)
 
 def testPrediction(X, Y, kernel):
+        # print ("X="+str(X))
+        # print ("Y="+str(Y))
+
         #Train
         x_train = np.asarray(X[:-1])
         y_train = np.asarray(Y[:-1])
@@ -153,14 +152,14 @@ def testPrediction(X, Y, kernel):
 
         import warnings
         warnings.filterwarnings('ignore')
-        predictions = SVR(kernel=kernel).fit(x_train, y_train).predict(x_test)
+        predictions = SVR(kernel=kernel).fit(x_train, y_train).predict(x_test.reshape(1, -1))
 
-        ### print "x_train=" + str(x_train)
-        ### print "y_train=" + str(y_train)
-        ### print "x_test=" + str(x_test)
-        ### print "y_test=" + str(y_test)
-        ### print "x_test_1=" + str(x_test_1)
-        ### print "predictions=" + str(predictions)
+        # print ("x_train=" + str(x_train))
+        # print ("y_train=" + str(y_train))
+        # print ("x_test=" + str(x_test))
+        # print ("y_test=" + str(y_test))
+        # print ("x_test_1=" + str(x_test_1))
+        # print ("predictions=" + str(predictions))
 
         expected = y_test > x_test_1
         predicted = predictions > x_test_1

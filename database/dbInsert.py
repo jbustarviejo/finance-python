@@ -1,5 +1,4 @@
-from database.Connect import Database
-from mysql.connector.errors import OperationalError, ProgrammingError
+from database.connect import Database
 
 class DbInsert:
 
@@ -41,9 +40,9 @@ class DbInsert:
         query = "INSERT INTO companies (symbol, name, industry_id, created_at, updated_at) VALUES %s ON DUPLICATE KEY UPDATE symbol=VALUES(symbol), name=VALUES(name), industry_id=VALUES(industry_id), updated_at=NOW()" % queryValues
         try:
             Database().runQuery(query)
-        except OperationalError:
+        except MySQLError:
             #If lock error don't do nothing
-            print ""#"========Thread doing lock violantion========"
+            print ("========Thread doing lock violantion========")
 
     #Save company Xid array in database
     def updateCompanyXidAndCurrency(self, company_id, values):
@@ -52,18 +51,18 @@ class DbInsert:
         query = "UPDATE companies SET xid = %s, currency= '%s' WHERE id = %s" % (values["xid"], values["currency"], company_id)
         try:
             Database().runQuery(query)
-        except OperationalError:
+        except MySQLError:
             #If lock error don't do nothing
-            print ""#"========Thread doing lock violantion========"
+            print ("========Thread doing lock violantion========")
 
     #Save company currency array in database
     def updateCompanyCurrency(self, company_id, currency):
         query = "UPDATE companies SET currency = %s WHERE id = %s" % (xid, company_id)
         try:
             Database().runQuery(query)
-        except OperationalError:
+        except MySQLError:
             #If lock error don't do nothing
-            print ""#"========Thread doing lock violantion========"
+            print ("========Thread doing lock violantion========")
 
     #Save history array in database
     def saveHistory(self, histories):
@@ -77,11 +76,9 @@ class DbInsert:
         query = "INSERT INTO histories (company_id, currency, date, open, high, low, close, volume, created_at, updated_at) VALUES %s ON DUPLICATE KEY UPDATE company_id=VALUES(company_id), currency=VALUES(currency), date=VALUES(date), open=VALUES(open), high=VALUES(high), close=VALUES(close), volume=VALUES(volume), updated_at=NOW()" % queryValues
         try:
             Database().runQuery(query)
-        except OperationalError:
+        except MySQLError:
             #If lock error don't do nothing
-            print ""#"========Thread doing lock violantion========"
-        except ProgrammingError:
-            print "Error: "+queryValues
+            print ("========Thread doing lock violantion========")
 
     #Save currenciy list array in database
     def saveCurrencies(self, currencies):
@@ -95,27 +92,27 @@ class DbInsert:
         query = "INSERT INTO currencies (name, symbol, created_at, updated_at) VALUES %s ON DUPLICATE KEY UPDATE symbol=VALUES(symbol), name=VALUES(name), updated_at=NOW()" % queryValues
         try:
             Database().runQuery(query)
-        except OperationalError:
+        except MySQLError:
             #If lock error don't do nothing
-            print ""#"========Thread doing lock violantion========"
+            print ("========Thread doing lock violantion========")
 
     #Save currency Xid array in database
     def updateCurrencyXidToUSD(self, currency_id, xid):
         query = "UPDATE currencies SET xidToUSD = %s WHERE id = %s" % (xid, currency_id)
         try:
             Database().runQuery(query)
-        except OperationalError:
+        except MySQLError:
             #If lock error don't do nothing
-            print ""#"========Thread doing lock violantion========"
+            print ("========Thread doing lock violantion========")
 
     #Save currency Xid array in database
     def updateCurrencyXidFromUSD(self, currency_id, xid):
         query = "UPDATE currencies SET xidFromUSD = %s WHERE id = %s" % (xid, currency_id)
         try:
             Database().runQuery(query)
-        except OperationalError:
+        except MySQLError:
             #If lock error don't do nothing
-            print ""#"========Thread doing lock violantion========"
+            print ("========Thread doing lock violantion========")
 
     #Save currency history array in database
     def saveCurrencyHistory(self, histories):
@@ -129,11 +126,9 @@ class DbInsert:
         query = "INSERT INTO currencyHistoryToUSD (currency_id, date, price, created_at, updated_at) VALUES %s ON DUPLICATE KEY UPDATE currency_id=VALUES(currency_id), date=VALUES(date), price=VALUES(price), updated_at=NOW()" % queryValues
         try:
             Database().runQuery(query)
-        except OperationalError:
+        except MySQLError:
             #If lock error don't do nothing
-            print "###"#"========Thread doing lock violantion========"
-        except ProgrammingError:
-            print "Error: "+queryValues
+            print ("========Thread doing lock violantion========")
 
     #--------From analysis--------
 

@@ -1,6 +1,6 @@
 from analysis.Analize import *
 
-print "--Staring analysis script--"
+print ("--Staring analysis script--")
 
 #companies = DbGet().getCompaniesByCurrency(["USD", "JPY"]);
 #print companies

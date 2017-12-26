@@ -1,10 +1,10 @@
 from lxml import html
 import requests
-from database.DbGet import *
+from database.dbGet import *
 import Settings
 import json
 import datetime
-from database.DbInsert import *
+from database.dbInsert import *
 
 class ScrapHistory:
     """Scrap history from companies from FT.com"""
@@ -22,15 +22,15 @@ class ScrapHistory:
         companyXid = company[4]
         companyCurrency = company[5]
 
-        print "->Scrapping company: " + companyName,
+        print ("->Scrapping company: " + companyName,)
 
         if (not companyXid or not companyCurrency):
-            print "(xid-curr)"
+            print ("(xid-curr)")
             xidLink = Settings.companyXidUrl + "?s=" + companySymbol
             companyXidAndCurrency = self.scrapCompanyXidAndCurrency(xidLink)
             DbInsert().updateCompanyXidAndCurrency(companyId, companyXidAndCurrency)
         else:
-            print ""
+            print ("")
 
         if (not companyXid or companyXid==0): return True
 

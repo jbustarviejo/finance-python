@@ -1,8 +1,8 @@
 from analysis.CompanyAnalysisSVR import *
 from analysis.CompanyAnalysisSVC import *
 import numpy as np
-from database.DbGet import *
-from database.DbInsert import *
+from database.dbGet import *
+from database.dbInsert import *
 import Settings
 import os
 
@@ -37,23 +37,23 @@ class Analize:
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 continue
             DbInsert().saveOptSVR(company[0], optParams["max"], optParams["min"])
-            print "Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%"
+            print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVRR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 continue
             DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
-            print "Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%"
+            print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             #SVC and SVCR
             optParams = optParamsSVC(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 continue
             DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
-            print "Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%"
+            print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVCR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 continue
             DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
-            print "Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%"
+            print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")

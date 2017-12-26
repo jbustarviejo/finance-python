@@ -1,6 +1,6 @@
 from lxml import html
 import requests
-from database.DbGet import *
+from database.dbGet import *
 import Settings
 import json
 
@@ -17,7 +17,7 @@ class ScrapCompanies:
         industryId = industry[0]
         slug = industry[2].replace("&","%26")
         link = Settings.industriesInCompaniesUrl + slug
-        print "->Scrapping industry: "+industry[2],
+        print ("->Scrapping industry: "+industry[2],)
 
         link = Settings.industriesInCompaniesUrl + "?industry="+ slug + "&RowsPerPage=100"
         return self.scrapIndustry(link, industryId)
@@ -27,14 +27,14 @@ class ScrapCompanies:
         startRow = 0
         companies = []
         while(True):
-            print ".",
+            print (".",)
             companyList = self.getPageContent(link + "&startRow=" + str(startRow), industryId)
             if(not companyList):
                 break;
             startRow += 100
             companies = companies + companyList
 
-        print "!"
+        print ("!")
         return companies
 
     #Scrap industry link

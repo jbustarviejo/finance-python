@@ -1,7 +1,7 @@
 from lxml import html
 from lxml import etree
 import requests
-from database.DbGet import *
+from database.dbGet import *
 import Settings
 
 class ScrapIndustries:

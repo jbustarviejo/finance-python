@@ -1,10 +1,10 @@
 from lxml import html, etree
 import requests
-from database.DbGet import *
+from database.dbGet import *
 import Settings
 import json
 import datetime
-from database.DbInsert import *
+from database.dbInsert import *
 
 class ScrapCurrency:
     """Scrap currency from companies from FT.com"""
@@ -47,10 +47,10 @@ class ScrapCurrency:
             symbol = currency[2]
 
             if toUSD:
-                print "->Scrapping currency change xid " + symbol + "/USD:",
+                print ("->Scrapping currency change xid " + symbol + "/USD:",)
                 link = Settings.crossRateUrl + "?s=" + currency[2] + "USD"
             else:
-                print "->Scrapping currency change xid USD/"+symbol+":",
+                print ("->Scrapping currency change xid USD/"+symbol+":",)
                 link = Settings.crossRateUrl + "?s=USD" + currency[2]
 
             page = requests.get(link)
@@ -59,7 +59,7 @@ class ScrapCurrency:
             matchingElement = tree.xpath("//section[@class='mod-tearsheet-add-to-watchlist']")
 
             if (not matchingElement or len(matchingElement)==0):
-                print "-"
+                print ("-")
                 if toUSD:
                     DbInsert().updateCurrencyXidToUSD(currency[0], 0)
                 else:
@@ -69,14 +69,14 @@ class ScrapCurrency:
 
             xid = jsonScript["xid"]
             if (not xid):
-                print "-"
+                print ("-")
                 if toUSD:
                     DbInsert().updateCurrencyXidToUSD(currency[0], 0)
                 else:
                     DbInsert().updateCurrencyXidFromUSD(currency[0], 0)
                 continue
 
-            print xid
+            print (xid)
 
             if toUSD:
                 DbInsert().updateCurrencyXidToUSD(currency[0], xid)
@@ -94,16 +94,16 @@ class ScrapCurrency:
         currencyId = currency[0]
         currencyName = currency[1]
 
-        print "->Scrapping currency: " + currencyName,
+        print ("->Scrapping currency: " + currencyName,)
 
         currencyToUSD = True
         if (currency[3] == 0):
             currencyToUSD = False
             currencyXid = currency[4] #currencyXidFromUSD
-            print "from USD",
+            print ("from USD",)
         else:
             currencyXid = currency[3] #currencyXidToUSD
-            print "to USD",
+            print ("to USD",)
 
         payload = {"days":Settings.historyDaysToScrap,"dataNormalized":False,"dataPeriod":"Day","dataInterval":1,"endOffsetDays":0,"exchangeOffset":0,"realtime":False,"yFormat":"0.###","timeServiceFormat":"JSON","rulerIntradayStart":26,"rulerIntradayStop":3,"rulerInterdayStart":10957,"rulerInterdayStop":365,"returnDateType":"ISO8601","elements":[{"Label":"d475c065","Type":"price","Symbol":str(currencyXid),"OverlayIndicators":[],"Params":{}},{"Label":"079e5104","Type":"volume","Symbol":str(currencyXid),"OverlayIndicators":[],"Params":{}}]}
 
@@ -131,8 +131,8 @@ class ScrapCurrency:
                   historyValues["price"] = 1/closePrice[i]
 
               history.append(historyValues)
-            print ""
+            print ("")
         else:
-            print "- No history"
+            print ("- No history")
 
         return history

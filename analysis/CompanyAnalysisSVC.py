@@ -1,4 +1,4 @@
-from database.DbGet import *
+from database.dbGet import *
 import numpy as np
 import operator
 from sklearn.svm import SVC
@@ -9,7 +9,7 @@ def optParamsSVC(companies):
         for numberOfDaysSample in [122, 244, 488, 1220]:
             for numberOfTrainVectors in [122, 244, 488, 1220]:
                 for repeats in [244]:
-                    print "SVC - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
+                    print ("SVC - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
                     rate = getPredictionRate(companies, False, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
@@ -34,7 +34,7 @@ def optParamsSVCR(companies): #Opt SVC with profibility
         for numberOfDaysSample in [122, 244, 488, 1220]:
             for numberOfTrainVectors in [122, 244, 488, 1220]:
                 for repeats in [244]:
-                    print "SVCR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
+                    print ("SVCR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
                     rate = getPredictionRate(companies, True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
@@ -56,7 +56,7 @@ def optParamsSVCR(companies): #Opt SVC with profibility
 def getMaxAndMin(predictions):
     max = predictions[0]
     min = predictions[0]
-    for i in xrange(1, len(predictions)):
+    for i in range(1, len(predictions)):
         if predictions[i]["rate"] is None:
             continue
         if max["rate"] < predictions[i]["rate"]:
@@ -74,15 +74,15 @@ def getPredictionRate(companies, profibility, kernel, numberOfDaysSample, number
     predictions = []
     if len(companies) == 1:
         prediction = predictCompany(companies[0], profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats)
-        print "Prediction " + str(prediction) + "%"
+        print ("Prediction " + str(prediction) + "%")
         return prediction
     else:
-        for i in xrange(0, len(companies)):
+        for i in range(0, len(companies)):
             prediction = predictCompany(companies[i][0], kernel)
             if prediction:
                 predictions.append(prediction)
             if i>0 and i%10==0:
-                print str(i*100/len(companies)) + "%: prediction " + str(np.average(predictions))
+                print (str(i*100/len(companies)) + "%: prediction " + str(np.average(predictions)))
 
                 return np.average(predictions)
 
@@ -100,13 +100,13 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
     # print "data=" + str(data);
 
     if profibility is True:
-        for k in reversed(xrange(1,len(data))):
+        for k in reversed(range(1,len(data))):
             data[k] = data[k]/data[k-1]
 
         data[0] = 1
         # print "data2=" + str(data);
 
-    for l in reversed(xrange(1,len(data))):
+    for l in reversed(range(1,len(data))):
         if data[l] > data[l-1]:
             data[l] = 1
         else:
@@ -117,7 +117,7 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
     #Give format to Y and X in chunks
     X = []
     Y = []
-    for j in xrange(0, len(data) - numberOfDaysSample + 1):
+    for j in range(0, len(data) - numberOfDaysSample + 1):
         chunk = data[j : j+numberOfDaysSample]
         X.append(chunk[:-1])
         Y.append(chunk[-1])
@@ -128,7 +128,7 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
 
     #Iterate to get average result
     predictions=[]
-    for i in xrange(0, repeats):
+    for i in range(0, repeats):
         ###print "--------------iter:"+str(i)
         finalPos = i+1-repeats
         if finalPos != 0:

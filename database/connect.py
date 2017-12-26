@@ -1,4 +1,4 @@
-import mysql.connector
+import pymysql.cursors
 
 class Database:
     def runQuery(self, query='', update=False):
@@ -7,10 +7,9 @@ class Database:
           'password': '',
           'host': '127.0.0.1',
           'database': 'finance',
-          'raise_on_warnings': True,
         }
 
-        conn = mysql.connector.connect(**config)
+        conn = pymysql.connect(**config)
         cursor = conn.cursor()
         cursor.execute(query)
 
