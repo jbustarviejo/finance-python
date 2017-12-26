@@ -6,10 +6,10 @@ from sklearn.svm import SVR
 def optParamsSVR(companies):
     predictions = []
     for kernel in ["linear", "rbf", "sigmoid"]:
-        for numberOfDaysSample in [100, 500, 1000]:
-            for numberOfTrainVectors in [100, 200, 500]:
-                for repeats in [200]:
-                    print "- Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
+        for numberOfDaysSample in [122, 244, 488, 1220]:
+            for numberOfTrainVectors in [122, 244, 488, 1220]:
+                for repeats in [244]:
+                    print "SVR - "+str(companies)+" - Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
                     prediction = {}
                     rate = getPredictionRate(companies, False, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
@@ -31,10 +31,10 @@ def optParamsSVR(companies):
 def optParamsSVRR(companies): #Opt SVR with profibility
     predictions = []
     for kernel in ["linear", "rbf", "sigmoid"]:
-        for numberOfDaysSample in [100, 500, 1000]:
-            for numberOfTrainVectors in [100, 200, 500]:
-                for repeats in [200]:
-                    print "- Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
+        for numberOfDaysSample in [122, 244, 488, 1220]:
+            for numberOfTrainVectors in [122, 244, 488, 1220]:
+                for repeats in [244]:
+                    print "SVRR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats)
                     prediction = {}
                     rate = getPredictionRate(companies, True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
@@ -130,12 +130,11 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
             x = np.asarray(X[i:])
             y = np.asarray(Y[i:])
 
-        initialValue = x[0][0] #Get profibility
-        x = x/initialValue
-        y = y/initialValue
-
-        ###print "x=" + str(x)
-        ###print "y=" + str(y)
+        # initialValue = x[0][0] #Get profibility
+        # #TODO: LOLOLOLOLOLO. Review this normalization. It's like not doing nothing
+        #
+        # x = x/initialValue
+        # y = y/initialValue
 
         predictions.append(testPrediction(x, y, kernel))
 

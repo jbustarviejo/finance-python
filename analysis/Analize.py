@@ -56,4 +56,4 @@ class Analize:
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 continue
             DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
-            print "Company: "+str(company)+" M:"+s
+            print "Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%"
