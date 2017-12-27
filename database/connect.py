@@ -4,8 +4,8 @@ class Database:
     def runQuery(self, query='', update=False):
         config = {
           'user': 'root',
-          'password': '',
-          'host': '127.0.0.1',
+          'password': '7ngsdDasdfk378hlzp',
+          'host': 'finance.cgam2wvbif4f.eu-west-1.rds.amazonaws.com',
           'database': 'finance',
         }
 
