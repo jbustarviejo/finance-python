@@ -36,14 +36,14 @@ class Analize:
             optParams = optParamsSVR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 DbInsert().saveOptSVR(company[0], -1, -1)
-            else
+            else:
                 DbInsert().saveOptSVR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVRR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 DbInsert().saveOptSVR(company[0], -1, -1)
-            else
+            else:
                 DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
@@ -51,13 +51,13 @@ class Analize:
             optParams = optParamsSVC(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 DbInsert().saveOptSVR(company[0], -1, -1)
-            else
+            else:
                 DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVCR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
                 DbInsert().saveOptSVR(company[0], -1, -1)
-            else
+            else:
                 DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
