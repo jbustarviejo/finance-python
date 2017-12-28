@@ -120,7 +120,7 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
     #Iterate to get average result
     predictions=[]
     for i in range(0, repeats):
-        print ("company_id: "+str(i)+"/"+repeats)
+        print ("company_id: "+str(i)+"/"+str(repeats))
         finalPos = i+1-repeats
         if finalPos != 0:
             x = np.asarray(X[i:finalPos])
