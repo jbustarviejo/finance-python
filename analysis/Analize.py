@@ -30,7 +30,7 @@ class Analize:
 
     def analizeSVRAndSVCCompaniesProcess(self, currency):
         while(True):
-            company = [10088] #DbGet().getCompanyToOptSVR(currency);
+            company = DbGet().getCompanyToOptSVR(currency);
 
             #SVR and SVRR
             optParams = optParamsSVR(company)
