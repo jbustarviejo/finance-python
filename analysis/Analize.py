@@ -35,25 +35,29 @@ class Analize:
             #SVR and SVRR
             optParams = optParamsSVR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                continue
-            DbInsert().saveOptSVR(company[0], optParams["max"], optParams["min"])
+                DbInsert().saveOptSVR(company[0], -1, -1)
+            else
+                DbInsert().saveOptSVR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVRR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                continue
-            DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
+                DbInsert().saveOptSVR(company[0], -1, -1)
+            else
+                DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             #SVC and SVCR
             optParams = optParamsSVC(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                continue
-            DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
+                DbInsert().saveOptSVR(company[0], -1, -1)
+            else
+                DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVCR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                continue
-            DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
+                DbInsert().saveOptSVR(company[0], -1, -1)
+            else
+                DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
