@@ -129,7 +129,10 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
     #Iterate to get average result
     predictions=[]
     for i in range(0, repeats):
-        print ("C"+str(company_id)+": "+str(i)+"/"+str(repeats))
+        profibilityString = "SVC"
+        if profibility:
+            profibilityString = "SVCR"
+        print ("C"+str(company_id)+": "+profibilityString+str(i)+"/"+str(repeats)+". Kernel: "+str(kernel)+". Days: "+ str(numberOfDaysSample)+ ". TrainVectors: "+str(numberOfTrainVectors))
         finalPos = i+1-repeats
         if finalPos != 0:
             x = np.asarray(X[i:finalPos])
@@ -158,7 +161,7 @@ def testPrediction(X, Y, kernel):
 
         import warnings
         warnings.filterwarnings('ignore')
-        predictions = SVC(kernel=kernel).fit(x_train, y_train).predict(x_test)
+        predictions = SVC(kernel=kernel).fit(x_train, y_train).predict(x_test.reshape(1, -1))
 
         ### print "x_train=" + str(x_train)
         ### print "y_train=" + str(y_train)
