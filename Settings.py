@@ -1,6 +1,6 @@
 #General Settings
 numberOfThreads = 30
-numberOfAnalizeThreads = 5
+numberOfAnalizeThreads = 1
 
 #DB settings
 maxTimeForUpdateDB = 24 #hrs

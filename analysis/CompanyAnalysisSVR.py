@@ -7,8 +7,8 @@ from sklearn.svm import SVR
 def optParamsSVR(companies):
     predictions = []
     for kernel in ["linear", "rbf", "sigmoid"]:
-        for numberOfDaysSample in [122, 244, 488, 1220]:
-            for numberOfTrainVectors in [122, 244, 488, 1220]:
+        for numberOfDaysSample in [122, 244, 488]:
+            for numberOfTrainVectors in [122, 244, 488]:
                 for repeats in [244]:
                     print ("SVR - "+str(companies)+" - Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
@@ -32,8 +32,8 @@ def optParamsSVR(companies):
 def optParamsSVRR(companies): #Opt SVR with profibility
     predictions = []
     for kernel in ["linear", "rbf", "sigmoid"]:
-        for numberOfDaysSample in [122, 244, 488, 1220]:
-            for numberOfTrainVectors in [122, 244, 488, 1220]:
+        for numberOfDaysSample in [122, 244, 488]:
+            for numberOfTrainVectors in [122, 244, 488]:
                 for repeats in [244]:
                     print ("SVRR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
@@ -120,7 +120,7 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
     #Iterate to get average result
     predictions=[]
     for i in range(0, repeats):
-        #print "--------------iter:"+str(i)
+        print ("--------------iter:"+str(i))
         finalPos = i+1-repeats
         if finalPos != 0:
             x = np.asarray(X[i:finalPos])
