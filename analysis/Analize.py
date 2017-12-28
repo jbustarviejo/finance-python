@@ -35,14 +35,14 @@ class Analize:
             #SVR and SVRR
             optParams = optParamsSVR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                DbInsert().saveOptSVR(company[0], float(-1), float(-1))
+                DbInsert().saveOptSVR(company[0], double(0.5), double(0.5))
             else:
                 DbInsert().saveOptSVR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVRR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                DbInsert().saveOptSVR(company[0], float(-1), float(-1))
+                DbInsert().saveOptSVR(company[0], double(0.5), double(0.5))
             else:
                 DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
@@ -50,14 +50,14 @@ class Analize:
             #SVC and SVCR
             optParams = optParamsSVC(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                DbInsert().saveOptSVR(company[0], float(-1), float(-1))
+                DbInsert().saveOptSVR(company[0], double(0.5), double(0.5))
             else:
                 DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVCR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                DbInsert().saveOptSVR(company[0], float(-1), float(-1))
+                DbInsert().saveOptSVR(company[0], double(0.5), double(0.5))
             else:
                 DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
