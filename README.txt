@@ -11,7 +11,7 @@ pip3 install sklearn
 pip3 install scipy
 
 cd finance-python
-python3 analysisScript.py
+git pull && python3 analysisScript.py
 
 #Install Mysql. Dont forget specify the password
 sudo apt-get install mysql-server
