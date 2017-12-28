@@ -7,8 +7,8 @@ from sklearn.svm import SVR
 def optParamsSVR(companies):
     predictions = []
     for kernel in ["linear", "rbf", "sigmoid"]:
-        for numberOfDaysSample in [122, 244, 488]:
-            for numberOfTrainVectors in [122, 244, 488]:
+        for numberOfDaysSample in [61, 122, 244]:
+            for numberOfTrainVectors in [61, 122, 244]:
                 for repeats in [244]:
                     print ("SVR - "+str(companies)+" - Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
@@ -32,8 +32,8 @@ def optParamsSVR(companies):
 def optParamsSVRR(companies): #Opt SVR with profibility
     predictions = []
     for kernel in ["linear", "rbf", "sigmoid"]:
-        for numberOfDaysSample in [122, 244, 488]:
-            for numberOfTrainVectors in [122, 244, 488]:
+        for numberOfDaysSample in [61, 122, 244]:
+            for numberOfTrainVectors in [61, 122, 244]:
                 for repeats in [244]:
                     print ("SVRR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
