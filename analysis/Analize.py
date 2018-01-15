@@ -35,29 +35,29 @@ class Analize:
             #SVR and SVRR
             optParams = optParamsSVR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                DbInsert().saveOptSVR(company[0], 0.5, 0.5)
-            else:
-                DbInsert().saveOptSVR(company[0], optParams["max"], optParams["min"])
+                optParams["max"]=0.5;
+                optParams["min"]=0.5;
+            DbInsert().saveOptSVR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVRR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                DbInsert().saveOptSVR(company[0], 0.5, 0.5)
-            else:
-                DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
+                optParams["max"]=0.5;
+                optParams["min"]=0.5;
+            DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             #SVC and SVCR
             optParams = optParamsSVC(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                DbInsert().saveOptSVR(company[0], 0.5, 0.5)
-            else:
-                DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
+                optParams["max"]=0.5;
+                optParams["min"]=0.5;
+            DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
 
             optParams = optParamsSVCR(company)
             if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                DbInsert().saveOptSVR(company[0], 0.5, 0.5)
-            else:
-                DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
+                optParams["max"]=0.5;
+                optParams["min"]=0.5;
+            DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
             print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")

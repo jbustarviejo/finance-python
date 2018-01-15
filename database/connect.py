@@ -4,9 +4,12 @@ class Database:
     def runQuery(self, query='', update=False):
         config = {
           'user': 'root',
-          'password': '7ngsdDasdfk378hlzp',
-          'host': 'finance.cgam2wvbif4f.eu-west-1.rds.amazonaws.com',
+          'password': '',
+          'host': 'localhost',
           'database': 'finance',
+          # 'password': '7ngsdDasdfk378hlzp',
+          # 'host': 'finance.cgam2wvbif4f.eu-west-1.rds.amazonaws.com',
+          # 'database': 'finance',
         }
 
         conn = pymysql.connect(**config)
