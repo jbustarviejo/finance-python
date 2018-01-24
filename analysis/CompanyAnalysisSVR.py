@@ -158,7 +158,10 @@ def testPrediction(X, Y, kernel):
 
         import warnings
         warnings.filterwarnings('ignore')
-        predictions = SVR(kernel=kernel).fit(x_train, y_train).predict(x_test.reshape(1, -1))
+        try:
+            predictions = SVR(kernel=kernel).fit(x_train, y_train).predict(x_test.reshape(1, -1))
+        except ValueError:
+            return 1
 
         # print ("x_train=" + str(x_train))
         # print ("y_train=" + str(y_train))
