@@ -1,57 +1,61 @@
 from database.dbGet import *
+from database.dbInsert import *
+
 import numpy as np
 import operator
 from sklearn.svm import SVC
 
 def optParamsSVC(companies):
     predictions = []
-    for kernel in ["linear", "rbf", "sigmoid"]:
-        for numberOfDaysSample in [61, 122, 244]:
-            for numberOfTrainVectors in [61, 122, 244]:
+    for kernel in ["linear", "sigmoid", "rbf"]:
+        for numberOfDaysSample in [5, 19, 61, 122, 244]:
+            for numberOfTrainVectors in [5, 19, 61, 122, 244]:
                 for repeats in [244]:
                     print ("SVC - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
                     rate = getPredictionRate(companies, False, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
                         continue
-                    prediction["rate"] = rate
-                    prediction["kernel"] = kernel;
-                    prediction["numberOfDaysSample"] = numberOfDaysSample;
-                    prediction["numberOfTrainVectors"] = numberOfTrainVectors;
-                    prediction["repeats"] = repeats;
-                    predictions.append(prediction);
-    #print predictions
-    #Get the maximun and minimun value
-    if not predictions or len(predictions) <1:
-        return None
-    #Return result
-    result = getMaxAndMin(predictions)
-    return result
+                    # prediction["rate"] = rate
+                    # prediction["kernel"] = kernel;
+                    # prediction["numberOfDaysSample"] = numberOfDaysSample;
+                    # prediction["numberOfTrainVectors"] = numberOfTrainVectors;
+                    # prediction["repeats"] = repeats;
+                    # predictions.append(prediction);
+                    DbInsert().saveOptSVM(companies[0], "svc", kernel, rate, numberOfDaysSample, numberOfTrainVectors)
+    # #print predictions
+    # #Get the maximun and minimun value
+    # if not predictions or len(predictions) <1:
+    #     return None
+    # #Return result
+    # result = getMaxAndMin(predictions)
+    # return result
 
 def optParamsSVCR(companies): #Opt SVC with profibility
     predictions = []
-    for kernel in ["linear", "rbf", "sigmoid"]:
-        for numberOfDaysSample in [61, 122, 244]:
-            for numberOfTrainVectors in [61, 122, 244]:
+    for kernel in ["linear", "sigmoid", "rbf"]:
+        for numberOfDaysSample in [5, 19, 61, 122, 244]:
+            for numberOfTrainVectors in [5, 19, 61, 122, 244]:
                 for repeats in [244]:
                     print ("SVCR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
                     rate = getPredictionRate(companies, True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
                         continue
-                    prediction["rate"] = rate
-                    prediction["kernel"] = kernel;
-                    prediction["numberOfDaysSample"] = numberOfDaysSample;
-                    prediction["numberOfTrainVectors"] = numberOfTrainVectors;
-                    prediction["repeats"] = repeats;
-                    predictions.append(prediction);
-    #print predictions
-    #Get the maximun and minimun value
-    if not predictions or len(predictions) <1:
-        return None
-    #Return result
-    result = getMaxAndMin(predictions)
-    return result
+                    # prediction["rate"] = rate
+                    # prediction["kernel"] = kernel;
+                    # prediction["numberOfDaysSample"] = numberOfDaysSample;
+                    # prediction["numberOfTrainVectors"] = numberOfTrainVectors;
+                    # prediction["repeats"] = repeats;
+                    # predictions.append(prediction);
+                    DbInsert().saveOptSVM(companies[0], "svcr", kernel, rate, numberOfDaysSample, numberOfTrainVectors)
+    # #print predictions
+    # #Get the maximun and minimun value
+    # if not predictions or len(predictions) <1:
+    #     return None
+    # #Return result
+    # result = getMaxAndMin(predictions)
+    # return result
 
 def getMaxAndMin(predictions):
     max = predictions[0]

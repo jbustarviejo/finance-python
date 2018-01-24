@@ -30,34 +30,12 @@ class Analize:
 
     def analizeSVRAndSVCCompaniesProcess(self, currency):
         while(True):
-            company = DbGet().getCompanyToOptSVR(currency);
+            company = DbGet().getCompanyToOptSVM(currency);
 
-            #SVR and SVRR
-            optParams = optParamsSVR(company)
-            if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                optParams["max"]=0.5;
-                optParams["min"]=0.5;
-            DbInsert().saveOptSVR(company[0], optParams["max"], optParams["min"])
-            print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
+            optParamsSVR(company)
 
-            optParams = optParamsSVRR(company)
-            if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                optParams["max"]=0.5;
-                optParams["min"]=0.5;
-            DbInsert().saveOptSVRR(company[0], optParams["max"], optParams["min"])
-            print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
+            optParamsSVRR(company)
 
-            #SVC and SVCR
-            optParams = optParamsSVC(company)
-            if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                optParams["max"]=0.5;
-                optParams["min"]=0.5;
-            DbInsert().saveOptSVC(company[0], optParams["max"], optParams["min"])
-            print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
+            optParamsSVC(company)
 
-            optParams = optParamsSVCR(company)
-            if not optParams or optParams is None or not optParams["min"] or not optParams["max"]:
-                optParams["max"]=0.5;
-                optParams["min"]=0.5;
-            DbInsert().saveOptSVCR(company[0], optParams["max"], optParams["min"])
-            print ("Company: "+str(company)+" M:"+str(optParams["max"])+"% m:"+str(optParams["min"])+"%")
+            optParamsSVCR(company)

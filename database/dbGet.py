@@ -80,6 +80,16 @@ class DbGet:
             return False
         return result[0]
 
+    #Get history to optimize SVM
+    def getCompanyToOptSVM(self, currency):
+        if type(currency) is not None:
+            currencyFilter = " AND currency = '"+currency+"'"
+        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVM on companiesSVM.company_id = companies.id WHERE (companiesSVM.company_id IS NULL %s) ORDER BY RAND() LIMIT 1" % (currencyFilter)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
     #Get history of a company in USD by its id
     def getHistoryInUSD(self, company_id, limit):
         # Get company history in USD
