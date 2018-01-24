@@ -36,11 +36,8 @@ class Analize:
                 company = DbGet().getCompanyToOptPendingSVM();
 
             optParamsSVR(company)
-
             optParamsSVRR(company)
-
             optParamsSVC(company)
-
             optParamsSVCR(company)
 
             if retry:

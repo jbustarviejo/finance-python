@@ -168,7 +168,7 @@ def testPrediction(X, Y, kernel):
         try:
             predictions = SVC(kernel=kernel).fit(x_train, y_train).predict(x_test.reshape(1, -1))
         except ValueError:
-            return 1
+            return np.asarray([True]) #All are the same
 
         ### print "x_train=" + str(x_train)
         ### print "y_train=" + str(y_train)
