@@ -8,6 +8,8 @@ print ("--Staring analysis script--")
 
 # SVRAndSVRR for a given currency
 Analize().analizeSVRAndSVCCompanies("USD")
+#Recover!
+# Analize().analizeSVRAndSVCCompanies("USD", True)
 
 print("--Analysis script finished--")
 

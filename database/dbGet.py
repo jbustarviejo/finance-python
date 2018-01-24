@@ -90,6 +90,13 @@ class DbGet:
             return False
         return result[0]
 
+    def getCompanyToOptPendingSVM(self):
+        query = "SELECT company_id FROM (SELECT count(*) as count, company_id, MAX(updated_at) as updated_at FROM companiesSVM GROUP BY company_id) as t WHERE t.count < 300 AND updated_at < NOW() - INTERVAL 15 MINUTE ORDER BY RAND() LIMIT 1"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
     #Get history of a company in USD by its id
     def getHistoryInUSD(self, company_id, limit):
         # Get company history in USD
