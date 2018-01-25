@@ -140,3 +140,12 @@ class DbGet:
         if not result or not result[0]:
             return False
         return result
+
+    #Get if company has been processed
+    def getIfCompanyProcessed(self, company, svm, kernel, numberOfDaysSample, numberOfTrainVectors):
+        # Get company history in USD
+        query = "SELECT id FROM companiesSVM WHERE company_id = '%s' AND svm = '%s' AND kernel = '%s' AND number_of_days_sample = '%s' AND number_of_train_vectors = '%s' " % (company, svm, kernel, numberOfDaysSample, numberOfTrainVectors)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return True

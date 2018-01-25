@@ -9,7 +9,7 @@ import os
 class Analize:
 
     #Analyzes companies list array in database
-    def analizeSVRAndSVCCompanies(self, currency, retry):
+    def analizeSVRAndSVCCompanies(self, currency):
         imTheFather = True
         children = []
 
@@ -19,7 +19,7 @@ class Analize:
                 children.append(child)
             else:
                 imTheFather = False
-                self.analizeSVRAndSVCCompaniesProcess(currency, retry)
+                self.analizeSVRAndSVCCompaniesProcess(currency)
                 os._exit(0)
                 break
 
@@ -28,17 +28,18 @@ class Analize:
             os.waitpid(childP, 0)
 
 
-    def analizeSVRAndSVCCompaniesProcess(self, currency, retry):
+    def analizeSVRAndSVCCompaniesProcess(self, currency):
         while(True):
-            if not retry:
-                company = DbGet().getCompanyToOptSVM(currency);
-            else:
+            if currency is True:
                 company = DbGet().getCompanyToOptPendingSVM();
+                recover = True
+            else:
+                company = DbGet().getCompanyToOptSVM(currency);
+                recover = False
 
-            optParamsSVR(company)
-            optParamsSVRR(company)
-            optParamsSVC(company)
-            optParamsSVCR(company)
-
-            if retry:
+            optParamsSVR(company, recover)
+            optParamsSVRR(company, recover)
+            optParamsSVC(company, recover)
+            optParamsSVCR(company, recover)
+            if currency is True:
                 exit();

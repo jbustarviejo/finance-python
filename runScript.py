@@ -7,9 +7,9 @@ print ("--Staring analysis script--")
 #optParams = optParamsSVR(9999)
 
 # SVRAndSVRR for a given currency
-# Analize().analizeSVRAndSVCCompanies("USD", False)
+# Analize().analizeSVRAndSVCCompanies("USD")
 #Recover!
-Analize().analizeSVRAndSVCCompanies("USD", True)
+Analize().analizeSVRAndSVCCompanies(True)
 
 print("--Analysis script finished--")
 

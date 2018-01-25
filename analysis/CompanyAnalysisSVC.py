@@ -5,7 +5,7 @@ import numpy as np
 import operator
 from sklearn.svm import SVC
 
-def optParamsSVC(companies):
+def optParamsSVC(companies, recover):
     predictions = []
     for kernel in ["linear", "sigmoid", "rbf"]:
         for numberOfDaysSample in [5, 19, 61, 122, 244]:
@@ -13,6 +13,9 @@ def optParamsSVC(companies):
                 for repeats in [244]:
                     print ("SVC - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
+                    if recover is True:
+                        if DbGet().getIfCompanyProcessed(companies[0], "svc", kernel, numberOfDaysSample, numberOfTrainVectors) is True:
+                            continue
                     rate = getPredictionRate(companies, False, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
                         continue
@@ -31,7 +34,7 @@ def optParamsSVC(companies):
     # result = getMaxAndMin(predictions)
     # return result
 
-def optParamsSVCR(companies): #Opt SVC with profibility
+def optParamsSVCR(companies, recover): #Opt SVC with profibility
     predictions = []
     for kernel in ["linear", "sigmoid", "rbf"]:
         for numberOfDaysSample in [5, 19, 61, 122, 244]:
@@ -39,6 +42,9 @@ def optParamsSVCR(companies): #Opt SVC with profibility
                 for repeats in [244]:
                     print ("SVCR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                     prediction = {}
+                    if recover is True:
+                        if DbGet().getIfCompanyProcessed(companies[0], "svcr", kernel, numberOfDaysSample, numberOfTrainVectors) is True:
+                            continue
                     rate = getPredictionRate(companies, True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                     if rate is None:
                         continue
