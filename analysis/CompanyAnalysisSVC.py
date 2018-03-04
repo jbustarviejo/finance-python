@@ -7,25 +7,25 @@ from sklearn.svm import SVC
 
 def optParamsSVC(companies, recover):
     predictions = []
+    repeats = 244
     for kernel in ["linear", "sigmoid", "rbf"]:
         for numberOfDaysSample in [5, 19, 61, 122, 244]:
             for numberOfTrainVectors in [5, 19, 61, 122, 244]:
-                for repeats in [244]:
-                    print ("SVC - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
-                    prediction = {}
-                    if recover is True:
-                        if DbGet().getIfCompanyProcessed(companies[0], "svc", kernel, numberOfDaysSample, numberOfTrainVectors) is True:
-                            continue
-                    rate = getPredictionRate(companies, False, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
-                    if rate is None:
+                print ("SVC - "+str(companies[0])+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
+                prediction = {}
+                if recover is True:
+                    if DbGet().getIfCompanyProcessed(companies[0], "svc", kernel, numberOfDaysSample, numberOfTrainVectors) is True:
                         continue
-                    # prediction["rate"] = rate
-                    # prediction["kernel"] = kernel;
-                    # prediction["numberOfDaysSample"] = numberOfDaysSample;
-                    # prediction["numberOfTrainVectors"] = numberOfTrainVectors;
-                    # prediction["repeats"] = repeats;
-                    # predictions.append(prediction);
-                    DbInsert().saveOptSVM(companies[0], "svc", kernel, rate, numberOfDaysSample, numberOfTrainVectors)
+                rate = getPredictionRate(companies[0], False, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
+                if rate is None:
+                    rate = -2
+                # prediction["rate"] = rate
+                # prediction["kernel"] = kernel;
+                # prediction["numberOfDaysSample"] = numberOfDaysSample;
+                # prediction["numberOfTrainVectors"] = numberOfTrainVectors;
+                # prediction["repeats"] = repeats;
+                # predictions.append(prediction);
+                DbInsert().saveOptSVM(companies[0], "svc", kernel, rate, numberOfDaysSample, numberOfTrainVectors)
     # #print predictions
     # #Get the maximun and minimun value
     # if not predictions or len(predictions) <1:
@@ -36,25 +36,25 @@ def optParamsSVC(companies, recover):
 
 def optParamsSVCR(companies, recover): #Opt SVC with profibility
     predictions = []
+    repeats = 244
     for kernel in ["linear", "sigmoid", "rbf"]:
         for numberOfDaysSample in [5, 19, 61, 122, 244]:
             for numberOfTrainVectors in [5, 19, 61, 122, 244]:
-                for repeats in [244]:
-                    print ("SVCR - "+str(companies)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
-                    prediction = {}
-                    if recover is True:
-                        if DbGet().getIfCompanyProcessed(companies[0], "svcr", kernel, numberOfDaysSample, numberOfTrainVectors) is True:
-                            continue
-                    rate = getPredictionRate(companies, True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
-                    if rate is None:
+                print ("SVCR - "+str(companies[0])+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
+                prediction = {}
+                if recover is True:
+                    if DbGet().getIfCompanyProcessed(companies[0], "svcr", kernel, numberOfDaysSample, numberOfTrainVectors) is True:
                         continue
-                    # prediction["rate"] = rate
-                    # prediction["kernel"] = kernel;
-                    # prediction["numberOfDaysSample"] = numberOfDaysSample;
-                    # prediction["numberOfTrainVectors"] = numberOfTrainVectors;
-                    # prediction["repeats"] = repeats;
-                    # predictions.append(prediction);
-                    DbInsert().saveOptSVM(companies[0], "svcr", kernel, rate, numberOfDaysSample, numberOfTrainVectors)
+                rate = getPredictionRate(companies[0], True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
+                if rate is None:
+                    rate = -2
+                # prediction["rate"] = rate
+                # prediction["kernel"] = kernel;
+                # prediction["numberOfDaysSample"] = numberOfDaysSample;
+                # prediction["numberOfTrainVectors"] = numberOfTrainVectors;
+                # prediction["repeats"] = repeats;
+                # predictions.append(prediction);
+                DbInsert().saveOptSVM(companies[0], "svcr", kernel, rate, numberOfDaysSample, numberOfTrainVectors)
     # #print predictions
     # #Get the maximun and minimun value
     # if not predictions or len(predictions) <1:
@@ -80,31 +80,22 @@ def getMaxAndMin(predictions):
     return result;
 
 
-def getPredictionRate(companies, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
-    predictions = []
-    if len(companies) == 1:
-        prediction = predictCompany(companies[0], profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats)
-        print ("Prediction " + str(prediction) + "%")
-        return prediction
-    else:
-        for i in range(0, len(companies)):
-            prediction = predictCompany(companies[i][0], kernel)
-            if prediction:
-                predictions.append(prediction)
-            if i>0 and i%10==0:
-                print (str(i*100/len(companies)) + "%: prediction " + str(np.average(predictions)))
-
-                return np.average(predictions)
+def getPredictionRate(company, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
+    prediction = predictCompany(company, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats)
+    print ("Prediction " + str(prediction) + "%")
+    return prediction
 
 def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
     #Config
     #outputLength=1
     #numberOfTestVectors=1
 
+    numberOfDaysSample = numberOfDaysSample + 1
+
     data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
     if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats - 1:
-        #print "Not enough length"
-        return
+        print ("Not enough length")
+        return -1
 
     data = [s[0] for s in data if s[0]] #Transform tuples to int array
     # print "data=" + str(data);
@@ -142,7 +133,7 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
         profibilityString = "SVC"
         if profibility:
             profibilityString = "SVCR"
-        print ("C"+str(company_id)+": "+profibilityString+str(i)+"/"+str(repeats)+". Kernel: "+str(kernel)+". Days: "+ str(numberOfDaysSample)+ ". TrainVectors: "+str(numberOfTrainVectors))
+        print ("C"+str(company_id)+": "+profibilityString+str(i)+"/"+str(repeats)+". Kernel: "+str(kernel)+". Days: "+ str(numberOfDaysSample-1)+ ". TrainVectors: "+str(numberOfTrainVectors))
         finalPos = i+1-repeats
         if finalPos != 0:
             x = np.asarray(X[i:finalPos])
