@@ -81,17 +81,24 @@ class DbGet:
         return result[0]
 
     #Get history to optimize SVM
-    def getCompanyToOptSVM(self, currency):
-        if type(currency) is not None:
-            currencyFilter = " AND currency = '"+currency+"'"
-        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVM on companiesSVM.company_id = companies.id WHERE (companiesSVM.company_id IS NULL %s) ORDER BY RAND() LIMIT 1" % (currencyFilter)
+    def getCompanyToOptSVM(self, currencySymbols):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = "AND currency IN ("+inQuery[:-1]+")"
+        elif currencySymbols is None:
+            inQuery = ""
+        else:
+            inQuery = "AND currency IN ('"+currencySymbols+"')"
+        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVM4 on companiesSVM4.company_id = companies.id WHERE companiesSVM4.company_id IS NULL %s ORDER BY RAND() LIMIT 1" % (inQuery)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
         return result[0]
 
     def getCompanyToOptPendingSVM(self):
-        query = "SELECT company_id FROM (SELECT count(*) as count, company_id, MAX(updated_at) as updated_at FROM companiesSVM GROUP BY company_id) as t WHERE t.count < 300 AND updated_at < NOW() - INTERVAL 15 MINUTE ORDER BY RAND() LIMIT 1"
+        query = "SELECT company_id FROM (SELECT count(*) as count, company_id, MAX(updated_at) as updated_at FROM companiesSVM4 GROUP BY company_id) as t WHERE t.count < 300 AND updated_at < NOW() - INTERVAL 24*60 MINUTE ORDER BY RAND() LIMIT 1"
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False

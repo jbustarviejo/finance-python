@@ -9,7 +9,7 @@ import os
 class Analize:
 
     #Analyzes companies list array in database
-    def analizeSVRAndSVCCompanies(self, currency):
+    def analizeSVRAndSVCCompanies(self, currency = None):
         imTheFather = True
         children = []
 
@@ -37,9 +37,9 @@ class Analize:
                 company = DbGet().getCompanyToOptSVM(currency);
                 recover = False
 
-            optParamsSVR(company, recover)
-            optParamsSVRR(company, recover)
-            optParamsSVC(company, recover)
+            # optParamsSVR(company, recover)
+            # optParamsSVRR(company, recover)
+            # optParamsSVC(company, recover)
             optParamsSVCR(company, recover)
-            if currency is True:
-                exit();
+            # if currency is True:
+            #     exit();

@@ -37,14 +37,14 @@ def optParamsSVC(companies, recover):
 def optParamsSVCR(companies, recover): #Opt SVC with profibility
     predictions = []
     repeats = 244
-    for kernel in ["linear", "sigmoid", "rbf"]:
-        for numberOfDaysSample in [5, 19, 61, 122, 244]:
-            for numberOfTrainVectors in [5, 19, 61, 122, 244]:
+    for kernel in ["rbf"]:
+        for numberOfDaysSample in [1]:
+            for numberOfTrainVectors in [366]:
                 print ("SVCR - "+str(companies[0])+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                 prediction = {}
-                if recover is True:
-                    if DbGet().getIfCompanyProcessed(companies[0], "svcr", kernel, numberOfDaysSample, numberOfTrainVectors) is True:
-                        continue
+                # if recover is True:
+                #     if DbGet().getIfCompanyProcessed(companies[0], "svcr", kernel, numberOfDaysSample, numberOfTrainVectors) is True:
+                #         continue
                 rate = getPredictionRate(companies[0], True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats);
                 if rate is None:
                     rate = -2
@@ -79,7 +79,6 @@ def getMaxAndMin(predictions):
     result["min"] = min
     return result;
 
-
 def getPredictionRate(company, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
     prediction = predictCompany(company, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats)
     print ("Prediction " + str(prediction) + "%")
@@ -91,14 +90,23 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
     #numberOfTestVectors=1
 
     numberOfDaysSample = numberOfDaysSample + 1
-
     data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
     if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats - 1:
-        print ("Not enough length")
+        print ("Not enough length: "+str(numberOfDaysSample + numberOfTrainVectors + repeats - 1))
         return -1
 
     data = [s[0] for s in data if s[0]] #Transform tuples to int array
-    # print "data=" + str(data);
+    # print ("data=" + str(data))
+
+    prof_total = []
+    prof_perc = []
+    for j in range(0, len(data) - numberOfDaysSample + 1):
+        chunk = data[j : j+numberOfDaysSample]
+        prof_total.append(chunk[-1] - chunk[0])
+        prof_perc.append(chunk[-1] / chunk[0])
+
+    # print("prof_total="+str(np.asarray(prof_total)))
+    # print("prof_perc="+str(np.asarray(prof_perc)))
 
     if profibility is True:
         for k in reversed(range(1,len(data))):
@@ -123,12 +131,10 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
         X.append(chunk[:-1])
         Y.append(chunk[-1])
 
-    ###print "X0=" + str(np.asarray(X))
-    ###print "Y0=" + str(np.asarray(Y))
-    ###print ""
 
     #Iterate to get average result
     predictions=[]
+    probas=[]
     for i in range(0, repeats):
         profibilityString = "SVC"
         if profibility:
@@ -144,10 +150,11 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
 
         ###print "x=" + str(x)
         ###print "y=" + str(y)
+        pr = testPrediction(x, y, kernel)
+        predictions.append(pr["result"])
+        probas.append(pr["proba"][0][0])
 
-        predictions.append(testPrediction(x, y, kernel))
-
-    return np.average(predictions)
+    return {"rate": np.average(predictions), "proba": np.average(probas), "prof_total": np.average(prof_total), "prof_perc": np.average(prof_perc)}
 
 def testPrediction(X, Y, kernel):
         #Train
@@ -163,9 +170,12 @@ def testPrediction(X, Y, kernel):
         import warnings
         warnings.filterwarnings('ignore')
         try:
-            predictions = SVC(kernel=kernel).fit(x_train, y_train).predict(x_test.reshape(1, -1))
+            x_reshape = x_test.reshape(1, -1)
+            predictionModel = SVC(kernel=kernel, probability=True).fit(x_train, y_train)
+            predictions = predictionModel.predict(x_reshape)
+            proba = predictionModel.predict_proba(x_reshape)
         except ValueError:
-            return np.asarray([True]) #All are the same
+            return {"result": np.asarray([True]), "proba": {0: {0: -1}} } #All are the same
 
         ### print "x_train=" + str(x_train)
         ### print "y_train=" + str(y_train)
@@ -178,4 +188,4 @@ def testPrediction(X, Y, kernel):
         predicted = predictions > x_test_1
         ###print expected == predicted
 
-        return expected == predicted
+        return {"result": (expected == predicted), "proba": proba }

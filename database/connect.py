@@ -4,7 +4,7 @@ class Database:
     def runQuery(self, query='', update=False):
         config = {
           'user': 'root',
-          'password': '',
+          'password': 'root',
           'host': 'localhost',
           'database': 'finance',
           # 'password': '7ngsdDasdfk378hlzp',

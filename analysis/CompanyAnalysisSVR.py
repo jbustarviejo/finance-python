@@ -93,7 +93,7 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
 
     data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
     if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats - 1:
-        print ("Not enough length")
+        print ("Not enough length: "+str(len(data)))
         return -1
 
     data = [s[0] for s in data if s[0]] #Transform tuples to int array
