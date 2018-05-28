@@ -166,3 +166,17 @@ class DbInsert:
             prof_perc = rates["prof_perc"]
         query = "INSERT INTO companiesSVM4 (company_id, svm, kernel, rate, proba, number_of_days_sample, number_of_train_vectors, profitability_total, profitability_percentage, created_at, updated_at) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s', NOW(), NOW()) ON DUPLICATE KEY UPDATE company_id='%s', svm='%s', kernel='%s', rate='%s', proba='%s', number_of_days_sample='%s', number_of_train_vectors='%s', profitability_total='%s', profitability_percentage='%s'" % (companyId, svm, kernel, rate, proba, numberOfDaysSample, numberOfTrainVectors, prof_total, prof_perc, companyId, svm, kernel, rate, proba, numberOfDaysSample, numberOfTrainVectors, prof_total, prof_perc)
         Database().runQuery(query)
+
+    def saveOptSVMWithQ(self, companyId, svm, kernel, rates, numberOfDaysSample, numberOfTrainVectors, dateQ):
+        if (rates == -1 or rates ==-2):
+            rate = -1
+            proba = -1
+            prof_total = 0
+            prof_perc = 0
+        else:
+            rate = rates["rate"]
+            proba = rates["proba"]
+            prof_total = rates["prof_total"]
+            prof_perc = rates["prof_perc"]
+        query = "INSERT INTO companiesSVMWithQ (company_id, svm, kernel, rate, proba, number_of_days_sample, number_of_train_vectors, profitability_total, profitability_percentage, date_q, created_at, updated_at) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', NOW(), NOW()) ON DUPLICATE KEY UPDATE company_id='%s', svm='%s', kernel='%s', rate='%s', proba='%s', number_of_days_sample='%s', number_of_train_vectors='%s', profitability_total='%s', profitability_percentage='%s', date_q='%s'" % (companyId, svm, kernel, rate, proba, numberOfDaysSample, numberOfTrainVectors, prof_total, prof_perc, dateQ, companyId, svm, kernel, rate, proba, numberOfDaysSample, numberOfTrainVectors, prof_total, prof_perc, dateQ)
+        Database().runQuery(query)

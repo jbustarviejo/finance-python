@@ -9,9 +9,11 @@ print ("--Staring analysis script--")
 # SVRAndSVRR for a given currency
 #Analize().analizeSVRAndSVCCompanies("INR")
 #All!
-Analize().analizeSVRAndSVCCompanies()
+#Analize().analizeSVRAndSVCCompanies()
 #Recover
 # Analize().analizeSVRAndSVCCompanies(True)
+#AllWothQ
+Analize().analizeSVRAndSVCCompaniesWithQ()
 
 print("--Analysis script finished--")
 

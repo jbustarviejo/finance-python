@@ -1,4 +1,5 @@
 from database.connect import Database
+from datetime import datetime
 import Settings
 
 class DbGet:
@@ -104,6 +105,29 @@ class DbGet:
             return False
         return result[0]
 
+    def getCompanyToOptSVMWithQ(self, currencySymbols):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = "AND currency IN ("+inQuery[:-1]+")"
+        elif currencySymbols is None:
+            inQuery = ""
+        else:
+            inQuery = "AND currency IN ('"+currencySymbols+"')"
+        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVMWithQ on companiesSVMWithQ.company_id = companies.id WHERE companiesSVMWithQ.company_id IS NULL %s ORDER BY RAND() LIMIT 1" % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
+    def getCompanyToOptPendingSVMWithQ(self):
+        query = "SELECT company_id FROM (SELECT count(*) as count, company_id, MAX(updated_at) as updated_at FROM companiesSVMWithQ GROUP BY company_id) as t WHERE t.count < 300 AND updated_at < NOW() - INTERVAL 24*60 MINUTE ORDER BY RAND() LIMIT 1"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
     #Get history of a company in USD by its id
     def getHistoryInUSD(self, company_id, limit):
         # Get company history in USD
@@ -117,6 +141,24 @@ class DbGet:
     def getHistory(self, company_id, limit):
         # Get company history in USD
         query = "SELECT * from (SELECT histories.open as conversion FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' ORDER BY histories.date ASC LIMIT %s) as query where conversion is not null" % (company_id, limit)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getHistoryWithQ(self, company_id, limit, dateQ):
+        query = "SELECT histories.date as conversion FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND histories.date<'%s' ORDER BY histories.date DESC LIMIT 1" % (company_id, dateQ)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+
+        date = dateQ.split()[0].split("-");
+        dateT = datetime(int(date[0]), int(date[1]), int(date[2]))
+        diff = result[0][0]-dateT.date()
+        if abs(diff.days)>10:
+            return False
+
+        query = "SELECT * from (SELECT histories.open as conversion FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND histories.date<'%s' ORDER BY histories.date DESC LIMIT %s) as query where conversion is not null" % (company_id, dateQ, limit)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -151,8 +193,40 @@ class DbGet:
     #Get if company has been processed
     def getIfCompanyProcessed(self, company, svm, kernel, numberOfDaysSample, numberOfTrainVectors):
         # Get company history in USD
-        query = "SELECT id FROM companiesSVM WHERE company_id = '%s' AND svm = '%s' AND kernel = '%s' AND number_of_days_sample = '%s' AND number_of_train_vectors = '%s' " % (company, svm, kernel, numberOfDaysSample, numberOfTrainVectors)
+        query = "SELECT id FROM companiesSVM4 WHERE company_id = '%s' AND svm = '%s' AND kernel = '%s' AND number_of_days_sample = '%s' AND number_of_train_vectors = '%s' " % (company, svm, kernel, numberOfDaysSample, numberOfTrainVectors)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
         return True
+
+#plot
+
+    def getCompanyToPlotSVM(self, currencySymbols):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = " AND currency IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND currency IN ('"+currencySymbols+"')"
+
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVM4 svm JOIN companies c ON c.id = svm.company_id WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompanyToPlotSector(self, currencySymbols):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = " AND s.name IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND s.name IN ('"+currencySymbols+"')"
+
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVM4 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result

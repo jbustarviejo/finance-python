@@ -63,6 +63,24 @@ def optParamsSVCR(companies, recover): #Opt SVC with profibility
     # result = getMaxAndMin(predictions)
     # return result
 
+
+def optParamsSVCRWithQ(companies, recover): #Opt SVC with profibility
+    predictions = []
+    datesQ = ["2017-07-01 00:00:00", "2017-04-01 00:00:00", "2017-01-01 00:00:00", "2016-10-01 00:00:00", "2016-07-01 00:00:00", "2016-04-01 00:00:00", "2016-01-01 00:00:00", "2015-10-01 00:00:00", "2015-07-01 00:00:00", "2015-04-01 00:00:00", "2015-01-01 00:00:00", "2014-10-01 00:00:00", "2014-07-01 00:00:00", "2014-04-01 00:00:00", "2014-01-01 00:00:00"]
+    repeats = 244
+    for kernel in ["rbf"]:
+        for numberOfDaysSample in [1]:
+            for numberOfTrainVectors in [366]:
+                for dateQ in datesQ:
+                    print ("SVCR - "+str(dateQ)+" - "+str(companies[0])+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
+                    prediction = {}
+
+                    rate = getPredictionRate(companies[0], True, kernel, numberOfDaysSample, numberOfTrainVectors, repeats, dateQ);
+                    if rate is None:
+                        rate = -2
+
+                    DbInsert().saveOptSVMWithQ(companies[0], "svcr", kernel, rate, numberOfDaysSample, numberOfTrainVectors, dateQ)
+
 def getMaxAndMin(predictions):
     max = predictions[0]
     min = predictions[0]
@@ -79,18 +97,21 @@ def getMaxAndMin(predictions):
     result["min"] = min
     return result;
 
-def getPredictionRate(company, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
-    prediction = predictCompany(company, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats)
+def getPredictionRate(company, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats, dateQ = None):
+    prediction = predictCompany(company, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats, dateQ)
     print ("Prediction " + str(prediction) + "%")
     return prediction
 
-def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
+def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOfTrainVectors, repeats, dateQ):
     #Config
     #outputLength=1
     #numberOfTestVectors=1
 
     numberOfDaysSample = numberOfDaysSample + 1
-    data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
+    if dateQ is not None:
+        data = DbGet().getHistoryWithQ(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1, dateQ);
+    else:
+        data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats -1);
     if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats - 1:
         print ("Not enough length: "+str(numberOfDaysSample + numberOfTrainVectors + repeats - 1))
         return -1

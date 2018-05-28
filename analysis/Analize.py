@@ -43,3 +43,39 @@ class Analize:
             optParamsSVCR(company, recover)
             # if currency is True:
             #     exit();
+
+    #Analyzes companies list array in database
+    def analizeSVRAndSVCCompaniesWithQ(self, currency = None):
+        imTheFather = True
+        children = []
+
+        for i in range(Settings.numberOfAnalizeThreads): #Run multiple threads
+            child = os.fork()
+            if child:
+                children.append(child)
+            else:
+                imTheFather = False
+                self.analizeSVRAndSVCCompaniesProcessWithQ(currency)
+                os._exit(0)
+                break
+
+        #Father must wait to all children before continue
+        for childP in children:
+            os.waitpid(childP, 0)
+
+    def analizeSVRAndSVCCompaniesProcessWithQ(self, currency):
+        while(True):
+            if currency is True:
+                company = DbGet().getCompanyToOptPendingSVMWithQ();
+                recover = True
+            else:
+                company = DbGet().getCompanyToOptSVMWithQ(currency);
+                recover = False
+
+            # optParamsSVR(company, recover)
+            # optParamsSVRR(company, recover)
+            # optParamsSVC(company, recover)
+            optParamsSVCRWithQ(company, recover)
+            # if currency is True:
+            #     exit();
+            exit()
