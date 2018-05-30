@@ -78,4 +78,3 @@ class Analize:
             optParamsSVCRWithQ(company, recover)
             # if currency is True:
             #     exit();
-            exit()

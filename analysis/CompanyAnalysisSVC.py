@@ -116,7 +116,7 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
         print ("Not enough length: "+str(numberOfDaysSample + numberOfTrainVectors + repeats - 1))
         return -1
 
-    data = [s[0] for s in data if s[0]] #Transform tuples to int array
+    data = [s[0] for s in reversed(data) if s[0]] #Transform tuples to int array
     # print ("data=" + str(data))
 
     prof_total = []
