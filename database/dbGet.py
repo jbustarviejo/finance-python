@@ -230,3 +230,60 @@ class DbGet:
         if not result or not result[0]:
             return False
         return result
+
+    def getCompanyToPlotSectorByQ(self, currencySymbols, qDates):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = " AND svm.name IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND svm.name IN ('"+currencySymbols+"')"
+        if type(qDates) is list:
+            for i in range(0, len(qDates)):
+                inQuery+="'"+qDates[i]+"',"
+            inQuery = " AND svm.date_q IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND svm.date_q IN ('"+qDates+"')"
+
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompanyToPlotCurrencyByQ(self, currencySymbols, qDates):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = " AND currency IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND currency IN ('"+currencySymbols+"')"
+        if type(qDates) is list:
+            for i in range(0, len(qDates)):
+                inQuery+="'"+qDates[i]+"',"
+            inQuery = " AND svm.date_q IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND svm.date_q IN ('"+qDates+"')"
+
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompanyToPlotQ(self, qDates):
+        inQuery = ""
+        if type(qDates) is list:
+            for i in range(0, len(qDates)):
+                inQuery+="'"+qDates[i]+"',"
+            inQuery = " AND svm.date_q IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND svm.date_q IN ('"+qDates+"')"
+
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ svm WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
