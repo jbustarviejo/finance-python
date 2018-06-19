@@ -115,14 +115,14 @@ class DbGet:
             inQuery = ""
         else:
             inQuery = "AND currency IN ('"+currencySymbols+"')"
-        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVMWithQ on companiesSVMWithQ.company_id = companies.id WHERE companiesSVMWithQ.company_id IS NULL %s ORDER BY RAND() LIMIT 1" % (inQuery)
+        query = "SELECT companies.id FROM companies LEFT JOIN companiesSVMWithQ2 svmWQ on svmWQ.company_id = companies.id WHERE svmWQ.company_id IS NULL %s ORDER BY RAND() LIMIT 1" % (inQuery)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
         return result[0]
 
     def getCompanyToOptPendingSVMWithQ(self):
-        query = "SELECT company_id FROM (SELECT count(*) as count, company_id, MAX(updated_at) as updated_at FROM companiesSVMWithQ GROUP BY company_id) as t WHERE t.count < 300 AND updated_at < NOW() - INTERVAL 24*60 MINUTE ORDER BY RAND() LIMIT 1"
+        query = "SELECT company_id FROM (SELECT count(*) as count, company_id, MAX(updated_at) as updated_at FROM companiesSVMWithQ2 svmWQ GROUP BY company_id) as t WHERE t.count < 300 AND updated_at < NOW() - INTERVAL 24*60 MINUTE ORDER BY RAND() LIMIT 1"
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -210,7 +210,7 @@ class DbGet:
         else:
             inQuery = " AND currency IN ('"+currencySymbols+"')"
 
-        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVM4 svm JOIN companies c ON c.id = svm.company_id WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVM4 svm JOIN companies c ON c.id = svm.company_id WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -225,7 +225,7 @@ class DbGet:
         else:
             inQuery = " AND s.name IN ('"+currencySymbols+"')"
 
-        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVM4 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVM4 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -246,7 +246,7 @@ class DbGet:
         else:
             inQuery = " AND svm.date_q IN ('"+qDates+"')"
 
-        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        query = "SELECT (rate*100), profitability_percentage_with_alg*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -267,7 +267,7 @@ class DbGet:
         else:
             inQuery = " AND svm.date_q IN ('"+qDates+"')"
 
-        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -282,7 +282,7 @@ class DbGet:
         else:
             inQuery = " AND svm.date_q IN ('"+qDates+"')"
 
-        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ svm WHERE rate > 0 AND profitability_percentage > -1.1 AND profitability_percentage < 1.1 %s"  % (inQuery)
+        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ2 svm WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False

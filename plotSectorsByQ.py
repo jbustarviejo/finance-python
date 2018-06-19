@@ -20,7 +20,7 @@ def plot(ncol, nrow, axes, sector, nbins, qDate):
     axes[ncol, nrow].set_title(sector)
     counts, xedges, yedges, im = axes[ncol, nrow].hist2d(rate, prof_total, bins=nbins, cmap=LinearSegmentedColormap.from_list("custom_colors",[(1,1,1),(1,0,0)],N=nbins))
     axes[ncol, nrow].set_xlim(50,100)
-    axes[ncol, nrow].set_ylim(99,108)
+    axes[ncol, nrow].set_ylim(50,140)
     plt.colorbar(im, ax=axes[ncol, nrow])
 
 ncols=5

@@ -3,7 +3,10 @@ from database.dbInsert import *
 
 import numpy as np
 import operator
+from copy import copy as copy
 from sklearn.svm import SVC
+
+development = False
 
 def optParamsSVC(companies, recover):
     predictions = []
@@ -117,23 +120,17 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
         return -1
 
     data = [s[0] for s in reversed(data) if s[0]] #Transform tuples to int array
-    # print ("data=" + str(data))
+    development and print ("data=" + str(data))
 
-    prof_total = []
     prof_perc = []
-    for j in range(0, len(data) - numberOfDaysSample + 1):
-        chunk = data[j : j+numberOfDaysSample]
-        prof_total.append(chunk[-1] - chunk[0])
-        prof_perc.append(chunk[-1] / chunk[0])
-
-    # print("prof_total="+str(np.asarray(prof_total)))
-    # print("prof_perc="+str(np.asarray(prof_perc)))
+    prof_perc_with_alg = 1
 
     if profibility is True:
         for k in reversed(range(1,len(data))):
             data[k] = data[k]/data[k-1]
 
         data[0] = 1
+        prof_perc = copy(data)
         # print "data2=" + str(data);
 
     for l in reversed(range(1,len(data))):
@@ -144,6 +141,9 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
 
     data[0] = 1
 
+    development and print ("prof_perc=" + str(prof_perc))
+    development and print ("data=" + str(data))
+
     #Give format to Y and X in chunks
     X = []
     Y = []
@@ -152,10 +152,10 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
         X.append(chunk[:-1])
         Y.append(chunk[-1])
 
-
     #Iterate to get average result
     predictions=[]
     probas=[]
+    number_of_ones=[]
     for i in range(0, repeats):
         profibilityString = "SVC"
         if profibility:
@@ -169,13 +169,21 @@ def predictCompany(company_id, profibility, kernel, numberOfDaysSample, numberOf
             x = np.asarray(X[i:])
             y = np.asarray(Y[i:])
 
-        ###print "x=" + str(x)
-        ###print "y=" + str(y)
+        # print ("x=" + str(x))
+        # print ("y=" + str(y))
+
         pr = testPrediction(x, y, kernel)
         predictions.append(pr["result"])
-        probas.append(pr["proba"][0][0])
+        probas.append(pr["proba"][0][1])
+        number_of_ones.append(pr["number_of_ones"])
 
-    return {"rate": np.average(predictions), "proba": np.average(probas), "prof_total": np.average(prof_total), "prof_perc": np.average(prof_perc)}
+        if(pr["perc_with_alg"]):
+            prof_perc_with_alg = prof_perc_with_alg * prof_perc[i+1]
+
+        development and print ("prof_perc_with_alg=" + str(prof_perc_with_alg))
+        development and print ("prof_perc=" + str(prof_perc[i+1]))
+
+    return {"rate": np.average(predictions), "proba": np.average(probas), "prof_perc": np.average(prof_perc), "prof_perc_with_alg": prof_perc_with_alg, "number_of_ones": np.average(number_of_ones),}
 
 def testPrediction(X, Y, kernel):
         #Train
@@ -198,15 +206,21 @@ def testPrediction(X, Y, kernel):
         except ValueError:
             return {"result": np.asarray([True]), "proba": {0: {0: -1}} } #All are the same
 
-        ### print "x_train=" + str(x_train)
-        ### print "y_train=" + str(y_train)
-        ### print "x_test=" + str(x_test)
-        ### print "y_test=" + str(y_test)
-        ### print "x_test_1=" + str(x_test_1)
-        ### print "predictions=" + str(predictions)
+        development and print ("x_train=" + str(x_train))
+        development and print ("y_train=" + str(y_train))
+        development and print ("x_test=" + str(x_test))
+        development and print ("y_test=" + str(y_test))
+        development and print ("x_test_1=" + str(x_test_1))
+        development and print ("predictions=" + str(predictions))
 
         expected = y_test > x_test_1
         predicted = predictions > x_test_1
-        ###print expected == predicted
+        ###print (expected == predicted)
 
-        return {"result": (expected == predicted), "proba": proba }
+        number_of_ones = sum(X > 0)/len(X)
+
+        perc_with_alg = False
+        if(predictions[0]>0):
+            perc_with_alg = True
+
+        return {"result": (expected == predicted), "proba": proba , "perc_with_alg": perc_with_alg, "number_of_ones": number_of_ones}
