@@ -8,7 +8,7 @@ from matplotlib.colors import ListedColormap
 from database.dbGet import *
 
 def plot(ncol, nrow, axes, sector, nbins, qDate):
-    data = DbGet().getCompanyToPlotCurrencyByQ(sector, qDate, "_with_alg")
+    data = DbGet().getCompanyToPlotSectorByQDiff(sector, qDate)
     plot_data(ncol, nrow, axes, sector, nbins[0], qDate, data, LinearSegmentedColormap('BlueRed1', {
         'red':     ((0.0, 0.0, 0.0),
                    (1.0, 0.0, 0.0)),
@@ -18,17 +18,6 @@ def plot(ncol, nrow, axes, sector, nbins, qDate):
 
          'blue':  ((0.0, 0.0, 0.0),
                    (1.0, 1.0, 1.0))
-        }))
-    data = DbGet().getCompanyToPlotCurrencyByQ(sector, qDate)
-    plot_data(ncol, nrow, axes, sector, nbins[1], qDate, data, LinearSegmentedColormap('BlueRed1',
-        {'red':   ((0.0, 0.0, 0.0),
-                   (1.0, 1.0, 1.0)),
-
-         'green': ((0.0, 0.0, 0.0),
-                   (1.0, 0.0, 0.0)),
-
-         'blue':  ((0.0, 0.0, 0.0),
-                   (1.0, 0.0, 0.0))
         }))
 
 def plot_data(ncol, nrow, axes, sector, nbins, qDate, data, cmap):
@@ -50,12 +39,11 @@ def plot_data(ncol, nrow, axes, sector, nbins, qDate, data, cmap):
     axes[ncol, nrow].set_title(sector)
     counts, xedges, yedges, im = axes[ncol, nrow].hist2d(rate, prof_total, bins=nbins, cmap=my_cmap)
     axes[ncol, nrow].set_xlim(50, 100)
-    axes[ncol, nrow].set_ylim(0, 300)
+    axes[ncol, nrow].set_ylim(-200, 300)
     plt.colorbar(im, ax=axes[ncol, nrow])
 
-
-ncols=3
-nrows=3
+ncols=5
+nrows=2
 
 qDates = ["2017-07-01", "2017-04-01", "2017-01-01", "2016-10-01", "2016-07-01", "2016-04-01", "2016-01-01", "2015-10-01", "2015-07-01", "2015-04-01", "2015-01-01", "2014-10-01", "2014-07-01", "2014-04-01", "2014-01-01"]
 
@@ -64,23 +52,24 @@ for qDate in qDates:
     fig, axes = plt.subplots(ncols=ncols, nrows=nrows)
 
     # Plot
-    currencies = ["USD", "JPY", "EUR", "CAD", "AUD", "HKD", "INR", "GBX", "CNY"]
+    sectors = ["Financials", "Industrials", "Basic Materials", "Consumer Goods", "Consumer Services", "Technology", "Health Care", "Oil & Gas", "Utilities", "Telecommunications"]
     nbins = [
-        [[200, 200000], [200, 300]], #USD
-        [[90, 90], [1, 1]], #JPY
-        [[200, 2000], [40, 40]], #EUR
-        [[100, 1000], [20, 20]], #CAD
-        [[200, 3000], [50, 50]], #AUD
-        [[200, 500], [10, 10]], #HKD
-        [[100, 200], [5, 5]], #INR
-        [[100, 100], [100, 1000]], #GBX
-        [[70, 70], [10, 10]], #CNY
-    ]
+        [[107,5000],[107,8000]], #Financials
+        [[107,20000],[107,200]], #Industrials
+        [[107,5000],[107,30]], #Basic Materials
+        [[107,15000],[107,60]], #Consumer Goods
+        [[107,40000],[107,30]], #Consumer services
+        [[107,10000],[107,30]], #Technology
+        [[200,150000],[107,30]], #Health Care
+        [[150,4000],[107,40]], #Oil & Gas
+        [[107,500],[107,20]], #Utilities
+        [[80,350],[80,5]] #Telecommunications
+        ]
 
     k=0
     for j in range(nrows):
         for i in range(ncols):
-            plot(j, i, axes, currencies[k], nbins[k], qDate)
+            plot(j, i, axes, sectors[k], nbins[k], qDate)
             k+=1
 
     #Date title

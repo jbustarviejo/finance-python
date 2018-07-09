@@ -219,40 +219,78 @@ class DbGet:
     def getCompanyToPlotSector(self, currencySymbols):
         inQuery = ""
         if type(currencySymbols) is list:
+            inQueryP = ""
             for i in range(0, len(currencySymbols)):
-                inQuery+="'"+currencySymbols[i]+"',"
-            inQuery = " AND s.name IN ("+inQuery[:-1]+")"
+                inQueryP+="'"+currencySymbols[i]+"',"
+            inQuery = " AND s.name IN ("+inQueryP[:-1]+")"
         else:
             inQuery = " AND s.name IN ('"+currencySymbols+"')"
 
-        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVM4 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
+        query = "SELECT (rate*100), profitability_percentage  FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s"  % (inQuery)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
         return result
 
-    def getCompanyToPlotSectorByQ(self, currencySymbols, qDates):
+    def getCompanyToPlotSectorDiff(self, currencySymbols):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            inQueryP = ""
+            for i in range(0, len(currencySymbols)):
+                inQueryP+="'"+currencySymbols[i]+"',"
+            inQuery = " AND s.name IN ("+inQueryP[:-1]+")"
+        else:
+            inQuery = " AND s.name IN ('"+currencySymbols+"')"
+
+        query = "SELECT (rate*100), (profitability_percentage_with_alg-profitability_percentage)*100  FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompanyToPlotSectorByQ(self, currencySymbols, qDates, withAlg=""):
         inQuery = ""
         if type(currencySymbols) is list:
             for i in range(0, len(currencySymbols)):
                 inQuery+="'"+currencySymbols[i]+"',"
-            inQuery = " AND svm.name IN ("+inQuery[:-1]+")"
+            inQuery = " AND S.name IN ("+inQuery[:-1]+")"
         else:
-            inQuery = " AND svm.name IN ('"+currencySymbols+"')"
+            inQuery = " AND S.name IN ('"+currencySymbols+"')"
         if type(qDates) is list:
             for i in range(0, len(qDates)):
-                inQuery+="'"+qDates[i]+"',"
-            inQuery = " AND svm.date_q IN ("+inQuery[:-1]+")"
+                inQueryP+="'"+qDates[i]+"',"
+            inQuery += " AND svm.date_q IN ("+inQueryP[:-1]+")"
         else:
-            inQuery = " AND svm.date_q IN ('"+qDates+"')"
+            inQuery += " AND svm.date_q IN ('"+qDates+"')"
 
-        query = "SELECT (rate*100), profitability_percentage_with_alg*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
+        query = "SELECT (rate*100), profitability_percentage%s*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s AND profitability_percentage%s > 0"  % (withAlg, inQuery, withAlg)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
         return result
 
-    def getCompanyToPlotCurrencyByQ(self, currencySymbols, qDates):
+    def getCompanyToPlotSectorByQDiff(self, currencySymbols, qDates):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = " AND S.name IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND S.name IN ('"+currencySymbols+"')"
+        if type(qDates) is list:
+            for i in range(0, len(qDates)):
+                inQueryP+="'"+qDates[i]+"',"
+            inQuery += " AND svm.date_q IN ("+inQueryP[:-1]+")"
+        else:
+            inQuery += " AND svm.date_q IN ('"+qDates+"')"
+
+        query = "SELECT (rate*100), (profitability_percentage_with_alg-profitability_percentage)*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s AND profitability_percentage >0 AND profitability_percentage_with_alg > 0"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompanyToPlotCurrencyByQ(self, currencySymbols, qDates, withAlg=""):
         inQuery = ""
         if type(currencySymbols) is list:
             for i in range(0, len(currencySymbols)):
@@ -261,13 +299,59 @@ class DbGet:
         else:
             inQuery = " AND currency IN ('"+currencySymbols+"')"
         if type(qDates) is list:
+            inQueryP = ""
             for i in range(0, len(qDates)):
-                inQuery+="'"+qDates[i]+"',"
-            inQuery = " AND svm.date_q IN ("+inQuery[:-1]+")"
+                inQueryP+="'"+qDates[i]+"',"
+            inQuery += " AND svm.date_q IN ("+inQuery[:-1]+")"
         else:
-            inQuery = " AND svm.date_q IN ('"+qDates+"')"
+            inQuery += " AND svm.date_q IN ('"+qDates+"')"
 
-        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
+        query = "SELECT (rate*100), profitability_percentage%s*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s AND profitability_percentage%s > 0"  % (withAlg, inQuery, withAlg)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompanyToPlotCurrencyByQDiff(self, currencySymbols, qDates):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = " AND currency IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND currency IN ('"+currencySymbols+"')"
+        if type(qDates) is list:
+            inQueryP = ""
+            for i in range(0, len(qDates)):
+                inQueryP+="'"+qDates[i]+"',"
+            inQuery += " AND svm.date_q IN ("+inQuery[:-1]+")"
+        else:
+            inQuery += " AND svm.date_q IN ('"+qDates+"')"
+
+        query = "SELECT (rate*100), (profitability_percentage_with_alg-profitability_percentage)*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s AND profitability_percentage > 0 AND profitability_percentage_with_alg>0"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompanyToPlotCurrencyDiff(self, currencySymbols):
+        inQuery = ""
+        if type(currencySymbols) is list:
+            for i in range(0, len(currencySymbols)):
+                inQuery+="'"+currencySymbols[i]+"',"
+            inQuery = " AND currency IN ("+inQuery[:-1]+")"
+        else:
+            inQuery = " AND currency IN ('"+currencySymbols+"')"
+
+        query = "SELECT (rate*100), (profitability_percentage_with_alg-profitability_percentage)*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 %s AND profitability_percentage > 0 AND profitability_percentage_with_alg>0"  % (inQuery)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompaniesToPlotDiff(self):
+
+        query = "SELECT (rate*100), (profitability_percentage_with_alg-profitability_percentage)*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > 0 AND profitability_percentage_with_alg>0"
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -282,7 +366,7 @@ class DbGet:
         else:
             inQuery = " AND svm.date_q IN ('"+qDates+"')"
 
-        query = "SELECT (rate*100), profitability_percentage*100 FROM companiesSVMWithQ2 svm WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
+        query = "SELECT (rate*100), profitability_percentage_with_alg*100 FROM companiesSVMWithQ2 svm WHERE rate > 0 %s"  % (inQuery) #AND profitability_percentage > -1.1 AND profitability_percentage < 1.1
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False

@@ -3,12 +3,36 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from scipy.stats import kde
+from matplotlib.colors import ListedColormap
 
 from database.dbGet import *
 
 def plot(ncol, nrow, axes, sector, nbins, qDate):
-    data = DbGet().getCompanyToPlotSectorByQ(sector, qDate)
+    data = DbGet().getCompanyToPlotSectorByQ(sector, qDate, "_with_alg")
+    plot_data(ncol, nrow, axes, sector, nbins[0], qDate, data, LinearSegmentedColormap('BlueRed1', {
+        'red':     ((0.0, 0.0, 0.0),
+                   (1.0, 0.0, 0.0)),
 
+         'green': ((0.0, 0.0, 0.0),
+                   (1.0, 0.0, 0.0)),
+
+         'blue':  ((0.0, 0.0, 0.0),
+                   (1.0, 1.0, 1.0))
+        }))
+    data = DbGet().getCompanyToPlotSectorByQ(sector, qDate)
+    plot_data(ncol, nrow, axes, sector, nbins[1], qDate, data, LinearSegmentedColormap('BlueRed1',
+        {'red':   ((0.0, 0.0, 0.0),
+                   (1.0, 1.0, 1.0)),
+
+         'green': ((0.0, 0.0, 0.0),
+                   (1.0, 0.0, 0.0)),
+
+         'blue':  ((0.0, 0.0, 0.0),
+                   (1.0, 0.0, 0.0))
+        }))
+
+
+def plot_data(ncol, nrow, axes, sector, nbins, qDate, data, cmap):
     prof_total = []
     rate = []
 
@@ -16,11 +40,18 @@ def plot(ncol, nrow, axes, sector, nbins, qDate):
         rate.append( data [j][0])
         prof_total.append(data [j][1])
 
+    # Get the colormap colors
+    my_cmap = cmap(np.arange(cmap.N))
+    # Set alpha
+    my_cmap[:,-1] = np.linspace(0, 1, cmap.N)
+    # Create new colormap
+    my_cmap = ListedColormap(my_cmap)
+
     # 2D Histogram
     axes[ncol, nrow].set_title(sector)
-    counts, xedges, yedges, im = axes[ncol, nrow].hist2d(rate, prof_total, bins=nbins, cmap=LinearSegmentedColormap.from_list("custom_colors",[(1,1,1),(1,0,0)],N=nbins))
-    axes[ncol, nrow].set_xlim(50,100)
-    axes[ncol, nrow].set_ylim(50,140)
+    counts, xedges, yedges, im = axes[ncol, nrow].hist2d(rate, prof_total, bins=nbins, cmap=my_cmap)
+    axes[ncol, nrow].set_xlim(50, 100)
+    axes[ncol, nrow].set_ylim(0, 300)
     plt.colorbar(im, ax=axes[ncol, nrow])
 
 ncols=5
@@ -34,7 +65,18 @@ for qDate in qDates:
 
     # Plot
     sectors = ["Financials", "Industrials", "Basic Materials", "Consumer Goods", "Consumer Services", "Technology", "Health Care", "Oil & Gas", "Utilities", "Telecommunications"]
-    nbins = [100, 100, 100, 95, 100, 105, 90, 90, 80, 55]
+    nbins = [
+        [[107,5000],[107,8000]], #Financials
+        [[107,20000],[107,200]], #Industrials
+        [[107,5000],[107,30]], #Basic Materials
+        [[107,15000],[107,60]], #Consumer Goods
+        [[107,40000],[107,30]], #Consumer services
+        [[107,10000],[107,30]], #Technology
+        [[200,150000],[107,30]], #Health Care
+        [[150,4000],[107,40]], #Oil & Gas
+        [[107,500],[107,20]], #Utilities
+        [[80,350],[80,5]] #Telecommunications
+        ]
 
     k=0
     for j in range(nrows):

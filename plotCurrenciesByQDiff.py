@@ -8,7 +8,7 @@ from matplotlib.colors import ListedColormap
 from database.dbGet import *
 
 def plot(ncol, nrow, axes, sector, nbins, qDate):
-    data = DbGet().getCompanyToPlotCurrencyByQ(sector, qDate, "_with_alg")
+    data = DbGet().getCompanyToPlotCurrencyByQDiff(sector, qDate)
     plot_data(ncol, nrow, axes, sector, nbins[0], qDate, data, LinearSegmentedColormap('BlueRed1', {
         'red':     ((0.0, 0.0, 0.0),
                    (1.0, 0.0, 0.0)),
@@ -18,17 +18,6 @@ def plot(ncol, nrow, axes, sector, nbins, qDate):
 
          'blue':  ((0.0, 0.0, 0.0),
                    (1.0, 1.0, 1.0))
-        }))
-    data = DbGet().getCompanyToPlotCurrencyByQ(sector, qDate)
-    plot_data(ncol, nrow, axes, sector, nbins[1], qDate, data, LinearSegmentedColormap('BlueRed1',
-        {'red':   ((0.0, 0.0, 0.0),
-                   (1.0, 1.0, 1.0)),
-
-         'green': ((0.0, 0.0, 0.0),
-                   (1.0, 0.0, 0.0)),
-
-         'blue':  ((0.0, 0.0, 0.0),
-                   (1.0, 0.0, 0.0))
         }))
 
 def plot_data(ncol, nrow, axes, sector, nbins, qDate, data, cmap):
@@ -50,7 +39,7 @@ def plot_data(ncol, nrow, axes, sector, nbins, qDate, data, cmap):
     axes[ncol, nrow].set_title(sector)
     counts, xedges, yedges, im = axes[ncol, nrow].hist2d(rate, prof_total, bins=nbins, cmap=my_cmap)
     axes[ncol, nrow].set_xlim(50, 100)
-    axes[ncol, nrow].set_ylim(0, 300)
+    axes[ncol, nrow].set_ylim(-200, 300)
     plt.colorbar(im, ax=axes[ncol, nrow])
 
 
