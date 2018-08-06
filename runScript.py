@@ -1,5 +1,7 @@
 from analysis.Analize import *
+import os
 
+os.system('clear') #Clear
 print ("--Staring analysis script--")
 
 #companies = DbGet().getCompaniesByCurrency(["USD", "JPY"]);
@@ -13,8 +15,10 @@ print ("--Staring analysis script--")
 #Recover
 # Analize().analizeSVRAndSVCCompanies(True)
 #AllWothQ
-Analize().analizeSVRAndSVCCompaniesWithQ()
+# Analize().analizeSVRAndSVCCompaniesWithQ()
+# All companies for SVC
+Analize().analizeSVCCompanies()
 
-print("--Analysis script finished--")
+print("\n\n------Analysis script finished------\n")
 
 exit()

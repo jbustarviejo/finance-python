@@ -63,6 +63,25 @@ class Analize:
         for childP in children:
             os.waitpid(childP, 0)
 
+    #Analyzes companies list array in database
+    def analizeSVCCompanies(self):
+        imTheFather = True
+        children = []
+
+        for i in range(Settings.numberOfAnalizeThreads): #Run multiple threads
+            child = os.fork()
+            if child:
+                children.append(child)
+            else:
+                imTheFather = False
+                self.analizeSVCCompaniesProcess()
+                os._exit(0)
+                break
+
+        #Father must wait to all children before continue
+        for childP in children:
+            os.waitpid(childP, 0)
+
     def analizeSVRAndSVCCompaniesProcessWithQ(self, currency):
         while(True):
             if currency is True:
@@ -78,3 +97,11 @@ class Analize:
             optParamsSVCRWithQ(company, recover)
             # if currency is True:
             #     exit();
+
+    def analizeSVCCompaniesProcess(self):
+        while(True):
+            company = DbGet().getCompanyToOptSVC();
+
+            optParamsSVCR2(company[0])
+            # if currency is True:
+            # exit();

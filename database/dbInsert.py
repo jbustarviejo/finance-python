@@ -165,6 +165,20 @@ class DbInsert:
         query = "INSERT INTO companiesSVM4 (company_id, svm, kernel, rate, proba, number_of_days_sample, number_of_train_vectors, profitability_percentage, created_at, updated_at) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s', NOW(), NOW()) ON DUPLICATE KEY UPDATE company_id='%s', svm='%s', kernel='%s', rate='%s', proba='%s', number_of_days_sample='%s', number_of_train_vectors='%s', profitability_percentage='%s'" % (companyId, svm, kernel, rate, proba, numberOfDaysSample, numberOfTrainVectors, prof_perc, companyId, svm, kernel, rate, proba, numberOfDaysSample, numberOfTrainVectors, prof_perc)
         Database().runQuery(query)
 
+    def saveOptSVC(self, companyId, svm, kernel, rate, proba, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems, number_of_ones, numberOfDaysSample, numberOfTrainVectors):
+        if (rate == -1 or rate ==-2):
+            rate = -1
+            proba = -1
+            prof_perc = 0
+            rate_ems = -1
+            prof_perc_with_alg = 0
+            number_of_ones = 0
+            prof_perc_with_ems = 0
+
+        query = "INSERT INTO companiesSVC (company_id, svm, kernel, rate, proba, number_of_ones, number_of_days_sample, number_of_train_vectors, profitability_percentage, profitability_percentage_with_alg, profitability_percentage_with_ems, rate_ems, created_at, updated_at) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',NOW(), NOW()) ON DUPLICATE KEY UPDATE company_id='%s', svm='%s', kernel='%s', rate='%s', proba='%s', number_of_ones='%s', number_of_days_sample='%s', number_of_train_vectors='%s', profitability_percentage='%s', profitability_percentage_with_alg ='%s', profitability_percentage_with_ems ='%s', rate_ems='%s'" % (companyId, svm, kernel, rate, proba, number_of_ones, numberOfDaysSample, numberOfTrainVectors, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems, companyId, svm, kernel, rate, proba, number_of_ones, numberOfDaysSample, numberOfTrainVectors, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems)
+        # print(query)
+        Database().runQuery(query)
+
     def saveOptSVMWithQ(self, companyId, svm, kernel, rates, numberOfDaysSample, numberOfTrainVectors, dateQ):
         if (rates == -1 or rates ==-2):
             rate = -1

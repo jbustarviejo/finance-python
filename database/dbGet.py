@@ -121,6 +121,13 @@ class DbGet:
             return False
         return result[0]
 
+    def getCompanyToOptSVC(self):
+        query = "SELECT DISTINCT(c.id) FROM companies c JOIN histories h ON h.company_id = c.id AND c.symbol like '%:mce' LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = h.company_id WHERE svmWQ.company_id IS NULL AND YEAR(h.date) = 2017 ORDER BY RAND() LIMIT 1"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
     def getCompanyToOptPendingSVMWithQ(self):
         query = "SELECT company_id FROM (SELECT count(*) as count, company_id, MAX(updated_at) as updated_at FROM companiesSVMWithQ2 svmWQ GROUP BY company_id) as t WHERE t.count < 300 AND updated_at < NOW() - INTERVAL 24*60 MINUTE ORDER BY RAND() LIMIT 1"
         result = Database().runQuery(query)
@@ -141,6 +148,14 @@ class DbGet:
     def getHistory(self, company_id, limit):
         # Get company history in USD
         query = "SELECT * from (SELECT histories.open as conversion FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' ORDER BY histories.date ASC LIMIT %s) as query where conversion is not null" % (company_id, limit)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getHistory2(self, company_id, limit):
+        # Get company history in USD
+        query = "SELECT conversion FROM (SELECT histories.open as conversion, histories.date as date FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND date <'2017-01-01' ORDER BY histories.date DESC LIMIT %s) as q ORDER BY q.date" % (company_id, limit)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -352,6 +367,30 @@ class DbGet:
     def getCompaniesToPlotDiff(self):
 
         query = "SELECT (rate*100), (profitability_percentage_with_alg-profitability_percentage)*100 FROM companiesSVMWithQ2 svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > 0 AND profitability_percentage_with_alg>0"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompaniesToPlotPercentage(self):
+
+        query = "SELECT rate, profitability_percentage FROM companiesSVC svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > 0 AND profitability_percentage_with_alg>0 ORDER BY rate"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompaniesToPlotAlg(self):
+
+        query = "SELECT rate, profitability_percentage_with_alg FROM companiesSVC svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > 0 AND profitability_percentage_with_alg>0 ORDER BY rate"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result
+
+    def getCompaniesToPlotEMS(self):
+
+        query = "SELECT rate_ems, profitability_percentage_with_ems FROM companiesSVC svm JOIN companies c ON c.id = svm.company_id JOIN industries i ON i.id = c.industry_id JOIN sectors s ON s.id = i.sector_id WHERE rate > 0 AND profitability_percentage > 0 AND profitability_percentage_with_alg>0 ORDER BY rate"
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
