@@ -1,25 +1,56 @@
 from lxml import html
 import requests
-from database.dbGet import *
-import Settings
 import json
+import os
+
+import scrap.Settings
+from database.scrap.dbGet import *
+from database.scrap.dbInsert import *
 
 class ScrapCompanies:
     """Scrap companies from industries from FT.com"""
 
     #Get companies list array
+    def scrapAllCompanies(self):
+        imTheFather = True
+        children = []
+
+        for i in range(scrap.Settings.numberOfThreads): #Run multiple threads
+            child = os.fork()
+            if child:
+                children.append(child)
+            else:
+                imTheFather = False
+                self.scrapCompaniesProcess()
+                os._exit(0)
+                break
+
+        #Father must wait to all children before continue
+        for childP in children:
+            os.waitpid(childP, 0)
+
+    #Scrap companies proccess
+    def scrapCompaniesProcess(self):
+        while(True):
+            companies = self.scrapCompaniesList()
+            if not companies:
+                print("--No more companies to scrap--")
+                break;
+            DbInsert().saveCompanies(companies)
+
+    #Get companies list array
     def scrapCompaniesList(self):
-        industry = DbGet().getIndustryToScrap();
+        industry = DbGet().getIndustryToScrapCompanies();
         #Return false if not found
         if not industry:
             return False
 
         industryId = industry[0]
         slug = industry[2].replace("&","%26")
-        link = Settings.industriesInCompaniesUrl + slug
+        link = scrap.Settings.industriesInCompaniesUrl + slug
         print ("->Scrapping industry: "+industry[2],)
 
-        link = Settings.industriesInCompaniesUrl + "?industry="+ slug + "&RowsPerPage=100"
+        link = scrap.Settings.industriesInCompaniesUrl + "?industry="+ slug + "&RowsPerPage=100"
         return self.scrapIndustry(link, industryId)
 
     #iterate over industry

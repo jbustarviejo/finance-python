@@ -1,22 +1,33 @@
 from lxml import html
 from lxml import etree
 import requests
-from database.dbGet import *
-import Settings
+
+import scrap.Settings
+from database.scrap.dbGet import *
+from database.scrap.dbInsert import *
 
 class ScrapIndustries:
     """Scrap industries from sectors from FT.com"""
 
+    #Get all industries list and save it
+    def scrapAllIndustries(self):
+        while(True):
+            industries = self.scrapIndustries()
+            if not industries:
+                print("--No more industries to scrap--")
+                break;
+            DbInsert().saveIndustries(industries)
+
     #Get industries array
     def scrapIndustries(self):
-        sector = DbGet().getSectorToScrap();
+        sector = DbGet().getSectorToScrapIndustries();
         #Return if not found
         if not sector:
             return False
 
         sectorId = sector[0]
         slug = sector[2]
-        link = Settings.industriesInSectorsUrl + slug
+        link = scrap.Settings.industriesInSectorsUrl + slug
 
         return self.scrapSectorIndustries(link, sectorId)
 

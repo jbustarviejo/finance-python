@@ -1,12 +1,13 @@
 from lxml import html
 import requests
-import Settings
+
+from database.scrap.dbInsert import *
 
 class ScrapSectors:
     """Scrap sectors data from FT.com"""
 
     #Get sectors array
-    def scrapSectors(self):
+    def scrapAllSectors(self):
         page = requests.get('https://markets.ft.com/data/sectors')
         tree = html.fromstring(page.content)
 
@@ -24,4 +25,8 @@ class ScrapSectors:
 
             sectors.append(sectorInfo)
 
-        return sectors
+        if not sectors:
+            print("--No sectors detected to be scrapped--")
+            return
+
+        DbInsert().saveSectors(sectors)

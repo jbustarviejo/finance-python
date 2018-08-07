@@ -6,7 +6,7 @@ class Database:
           'user': 'root',
           'password': '',
           'host': 'localhost',
-          'database': 'finance_new',
+          'database': 'finance',
           # 'password': '7ngsdDasdfk378hlzp',
           # 'host': 'finance.cgam2wvbif4f.eu-west-1.rds.amazonaws.com',
           # 'database': 'finance',

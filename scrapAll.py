@@ -1,13 +1,13 @@
-from scrapping.Scrap import *
+from scrap.Scrap import *
 
 print ("--Staring scrapping script--")
 
 print ("\nScrapping sectors...")
-Scrap().scrapSectors()
+# Scrap().scrapSectors()
 print ("Finished sectors scrapping!")
 
 print ("\nScrapping industries...")
-Scrap().scrapIndustries()
+# Scrap().scrapIndustries()
 print ("Finished industries scrapping!")
 
 print ("\nScrapping companies list...")
@@ -15,8 +15,8 @@ Scrap().scrapCompanies()
 print ("Finished companies scrapping!")
 
 print ("\nScrapping companies history...")
-#Scrap().scrapHistories() #Scrap all histories
-Scrap().scrapHistories("INR") #Scrap a currency histories
+Scrap().scrapHistories() #Scrap all histories
+# Scrap().scrapHistories("INR") #Scrap a currency histories
 print ("Finished companies history scrapping!")
 
 print( "\nScrapping currencies...")

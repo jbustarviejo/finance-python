@@ -1,17 +1,49 @@
 from lxml import html
 import requests
-from database.dbGet import *
-import Settings
 import json
 import datetime
-from database.dbInsert import *
+import os
+
+import scrap.Settings
+from database.scrap.dbGet import *
+from database.scrap.dbInsert import *
 
 class ScrapHistory:
     """Scrap history from companies from FT.com"""
 
+    #Save histories from companies in database
+    def scrapAllHistories(self, currency = None):
+        imTheFather = True
+        children = []
+
+        for i in range(scrap.Settings.numberOfThreads): #Run multiple threads
+            child = os.fork()
+            if child:
+                children.append(child)
+            else:
+                imTheFather = False
+                self.scrapHistoriesProcess(currency)
+                os._exit(0)
+                break
+
+        #Father must wait to all children before continue
+        for childP in children:
+            os.waitpid(childP, 0)
+
+    #Scrap companies histories proccess
+    def scrapHistoriesProcess(self, currency):
+        while(True):
+            histories = ScrapHistory().scrapHistory(currency)
+            if histories is False:
+                break;
+            elif histories is True:
+                continue;
+            DbInsert().saveHistory(histories)
+
     #Get companies list array
     def scrapHistory(self, currency = None):
-        company = DbGet().getCompanyToScrap(currency);
+        # company = DbGet().getCompanyToScrapHistory(currency);
+        company = DbGet().getCompanyToScrapHistoryMCE();
         #Return false if not found
         if not company:
             return False
@@ -26,7 +58,7 @@ class ScrapHistory:
 
         if (not companyXid or not companyCurrency):
             print ("(xid-curr)")
-            xidLink = Settings.companyXidUrl + "?s=" + companySymbol
+            xidLink = scrap.Settings.companyXidUrl + "?s=" + companySymbol
             companyXidAndCurrency = self.scrapCompanyXidAndCurrency(xidLink)
             DbInsert().updateCompanyXidAndCurrency(companyId, companyXidAndCurrency)
         else:
@@ -60,14 +92,13 @@ class ScrapHistory:
 
         return values
 
-
     #iterate over history
     def scrapHistoryValues(self, companyId, companyXid):
-        payload = {"days":Settings.historyDaysToScrap,"dataNormalized":False,"dataPeriod":"Day","dataInterval":1,"endOffsetDays":0,"exchangeOffset":0,"realtime":False,"yFormat":"0.###","timeServiceFormat":"JSON","rulerIntradayStart":26,"rulerIntradayStop":3,"rulerInterdayStart":10957,"rulerInterdayStop":365,"returnDateType":"ISO8601","elements":[{"Label":"d475c065","Type":"price","Symbol":str(companyXid),"OverlayIndicators":[],"Params":{}},{"Label":"079e5104","Type":"volume","Symbol":str(companyXid),"OverlayIndicators":[],"Params":{}}]}
+        payload = {"days":scrap.Settings.historyDaysToScrap,"dataNormalized":False,"dataPeriod":"Day","dataInterval":1,"endOffsetDays":0,"exchangeOffset":0,"realtime":False,"yFormat":"0.###","timeServiceFormat":"JSON","rulerIntradayStart":26,"rulerIntradayStop":3,"rulerInterdayStart":10957,"rulerInterdayStop":365,"returnDateType":"ISO8601","elements":[{"Label":"d475c065","Type":"price","Symbol":str(companyXid),"OverlayIndicators":[],"Params":{}},{"Label":"079e5104","Type":"volume","Symbol":str(companyXid),"OverlayIndicators":[],"Params":{}}]}
 
         headers = {"Content-Type": "application/json","Content-Length": "999999"}
 
-        page = requests.post(Settings.companyHistoryUrl, data=json.dumps(payload), headers=headers)
+        page = requests.post(scrap.Settings.companyHistoryUrl, data=json.dumps(payload), headers=headers)
         parsedJson=json.loads(page.content);
 
         history = []
