@@ -122,7 +122,7 @@ class DbGet:
         return result[0]
 
     def getCompanyToOptSVC(self):
-        query = "SELECT DISTINCT(c.id) FROM companies c JOIN histories h ON h.company_id = c.id AND c.symbol like '%:mce' LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = h.company_id WHERE svmWQ.company_id IS NULL AND YEAR(h.date) = 2017 ORDER BY RAND() LIMIT 1"
+        query = "SELECT DISTINCT(c.id) FROM companies c JOIN histories h ON h.company_id = c.id AND c.currency = 'EUR' OR c.currency='USD' LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = h.company_id WHERE svmWQ.company_id IS NULL AND YEAR(h.date) = 2017 ORDER BY RAND() LIMIT 1"
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False

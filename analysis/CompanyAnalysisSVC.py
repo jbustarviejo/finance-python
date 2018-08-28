@@ -80,6 +80,7 @@ def optParamsSVCR2(company_id): #Opt SVC with profibility
     data = DbGet().getHistory2(company_id, numberOfDaysSample + numberOfTrainVectors + repeats + 1);
     if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats + 1:
         print ("Not enough length: "+str(numberOfDaysSample + numberOfTrainVectors + repeats + 1))
+        DbInsert().saveOptSVC(company_id, "svcr", kernel, -1, 0, 0, 0, 0, 0, 0, 0, 0)
         return -1
 
     new_data = []
@@ -110,6 +111,7 @@ def optParamsSVCR2(company_id): #Opt SVC with profibility
     number_of_ones=[]
     prof_perc_with_alg = 1
     prof_perc_with_ems = 1
+    prof_perc_b_and_h = 1
 
     for i in range(0, repeats):
         development and print()
@@ -144,6 +146,11 @@ def optParamsSVCR2(company_id): #Opt SVC with profibility
             development and print("->Ems decided to invest! = "+str(pr["perc_with_ems"]))
             prof_perc_with_ems = prof_perc_with_ems * profitability[finalPos]
             development and print("->New ems profitability = "+str(prof_perc_with_ems))
+        prof_perc_b_and_h = prof_perc_b_and_h * profitability[finalPos]
+        development and print("->New B&H profitability = "+str(prof_perc_b_and_h))
+
+    predictions = [int(val) for val in predictions] #Boolean to int
+    predictions_ems = [int(val) for val in predictions_ems] #Boolean to int
 
     development and print("\n--Results--\n")
     development and print("predictions="+str(predictions)+"\r")
@@ -154,7 +161,7 @@ def optParamsSVCR2(company_id): #Opt SVC with profibility
     development and print("avg probas="+str(np.average(probas))+"\r")
     development and print("number_of_ones="+str(number_of_ones)+"\r")
     development and print("avg number_of_ones="+str(np.average(number_of_ones))+"\r")
-    development and print("->Buy & Hold: prof_perc="+str(prod(profitability))+"\r")
+    development and print("->Buy & Hold: prof_perc="+str(prof_perc_b_and_h)+"\r")
     development and print("->Alg: prof_perc_with_alg="+str(prof_perc_with_alg)+"\r")
     development and print("->EMS: prof_perc_with_ems="+str(prof_perc_with_ems)+"\n")
 
@@ -302,7 +309,7 @@ def testPrediction2(X, Y, kernel):
         development and print("predicted="+str(predictions)+"\r")
     except ValueError:
         if(sum(x_train) == len(x_train) or sum(x_train) <= 1):
-            return {"result": np.asarray([True]), "result_ems": x_test == y_test, "proba": {0: {1: -1}}, "perc_with_alg": sum(x_train[1])>1, "number_of_ones": sum(X > 0)/len(X), "perc_with_ems": x_test == 1 } #All are the same
+            return {"result": np.asarray([True]), "result_ems": x_test == y_test, "proba": {0: {1: 1}}, "perc_with_alg": sum(x_train[1])>1, "number_of_ones": sum(X > 0)/len(X), "perc_with_ems": x_test == 1 } #All are the same
         print((x_train))
         print("ERROR")
         raise
@@ -337,7 +344,7 @@ def testPrediction(X, Y, kernel):
             predictions = predictionModel.predict(x_reshape)
             proba = predictionModel.predict_proba(x_reshape)
         except ValueError:
-            return {"result": np.asarray([True]), "proba": {0: {0: -1}} } #All are the same
+            return {"result": np.asarray([True]), "proba": {0: {0: 1}} } #All are the same
 
         development and print ("x_train=" + str(x_train))
         development and print ("y_train=" + str(y_train))

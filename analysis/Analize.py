@@ -102,6 +102,10 @@ class Analize:
         while(True):
             company = DbGet().getCompanyToOptSVC();
 
+            if company == False:
+                print("No more companies left")
+                exit()
+
             optParamsSVCR2(company[0])
             # if currency is True:
             # exit();

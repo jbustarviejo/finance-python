@@ -166,7 +166,7 @@ class DbInsert:
         Database().runQuery(query)
 
     def saveOptSVC(self, companyId, svm, kernel, rate, proba, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems, number_of_ones, numberOfDaysSample, numberOfTrainVectors):
-        if (rate == -1 or rate ==-2):
+        if (rate == -1 or rate ==-2 or not rate or rate ==""):
             rate = -1
             proba = -1
             prof_perc = 0

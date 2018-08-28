@@ -14,7 +14,12 @@ class Database:
 
         conn = pymysql.connect(**config)
         cursor = conn.cursor()
-        cursor.execute(query)
+
+        try:
+            cursor.execute(query)
+        except pymysql.err.DataError:
+            print("Error while executing: "+query)
+            raise
 
         if query.upper().startswith('SELECT'):
             data = cursor.fetchall()   # get results from select

@@ -9,17 +9,17 @@ from database.dbGet import *
 from math import log
 
 def plot(axes):
-    # data = DbGet().getCompaniesToPlotPercentage()
-    # plot_data(axes=axes, nbins=[120,500], data=data, cmap=LinearSegmentedColormap('BlueRed1', {
-    #     'red':     ((0.0, 0.0, 0.0),
-    #                (1.0, 0.0, 0.0)),
-    #
-    #      'green': ((0.0, 0.0, 0.0),
-    #                (1.0, 0.0, 0.0)),
-    #
-    #      'blue':  ((0.0, 0.0, 0.0),
-    #                (1.0, 1.0, 1.0))
-    #     }), color='blue')
+    data = DbGet().getCompaniesToPlotPercentage()
+    plot_data(axes=axes, nbins=[120,500], data=data, cmap=LinearSegmentedColormap('BlueRed1', {
+        'red':     ((0.0, 0.0, 0.0),
+                   (1.0, 0.0, 0.0)),
+
+         'green': ((0.0, 0.0, 0.0),
+                   (1.0, 0.0, 0.0)),
+
+         'blue':  ((0.0, 0.0, 0.0),
+                   (1.0, 1.0, 1.0))
+        }), color='blue')
     data = DbGet().getCompaniesToPlotAlg()
     plot_data(axes=axes, nbins=[120,120], data=data, cmap=LinearSegmentedColormap('BlueRed1', {
         'red':     ((0.0, 0.0, 0.0),
@@ -84,8 +84,8 @@ fig, axes = plt.subplots(ncols=ncols, nrows=nrows)
 # Plot
 plot(axes)
 axes.legend([
-# "Profitability without algoritm",
-"With algoritm",
+"B&H",
+"With algorithm",
 "EMS"],loc="upper right")
 
 plt.subplots_adjust(left=0.03, right=0.97, bottom=0.04, top=0.91, wspace=0.32)
