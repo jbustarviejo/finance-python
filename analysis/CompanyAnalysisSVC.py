@@ -67,9 +67,9 @@ def optParamsSVCR(companies, recover): #Opt SVC with profibility
     # result = getMaxAndMin(predictions)
     # return result
 
-def optParamsSVCR2(company_id): #Opt SVC with profibility
+def optParamsSVCR2(company_id, repeats, year, min_month, max_month): #Opt SVC with profibility
     predictions = []
-    repeats = 244 #244
+    # repeats = 244 #244
     kernel = "rbf"
     numberOfDaysSample = 1
     numberOfTrainVectors = 350 #350
@@ -77,10 +77,10 @@ def optParamsSVCR2(company_id): #Opt SVC with profibility
     development and print()
     print ("===> SVCR2 - "+str(company_id)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
 
-    data = DbGet().getHistory2(company_id, numberOfDaysSample + numberOfTrainVectors + repeats + 1);
+    data = DbGet().getHistory2(company_id, numberOfDaysSample + numberOfTrainVectors + repeats + 1, year, max_month);
     if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats + 1:
-        print ("Not enough length: "+str(numberOfDaysSample + numberOfTrainVectors + repeats + 1))
-        DbInsert().saveOptSVC(company_id, "svcr", kernel, -1, 0, 0, 0, 0, 0, 0, 0, 0)
+        print ("Not enough length. Wanted: "+str(numberOfDaysSample + numberOfTrainVectors + repeats + 1)+". Get: "+str(len(data)))
+        DbInsert().saveOptSVC(company_id, "svcr", kernel, -1, 0, 0, 0, 0, 0, 0, 0, 0, year, min_month, max_month)
         return -1
 
     new_data = []
@@ -165,7 +165,7 @@ def optParamsSVCR2(company_id): #Opt SVC with profibility
     development and print("->Alg: prof_perc_with_alg="+str(prof_perc_with_alg)+"\r")
     development and print("->EMS: prof_perc_with_ems="+str(prof_perc_with_ems)+"\n")
 
-    DbInsert().saveOptSVC(company_id, "svcr", kernel, np.average(predictions), np.average(probas), prod(profitability), prof_perc_with_alg, prof_perc_with_ems, np.average(predictions_ems), np.average(number_of_ones), numberOfDaysSample, numberOfTrainVectors)
+    DbInsert().saveOptSVC(company_id, "svcr", kernel, np.average(predictions), np.average(probas), prod(profitability), prof_perc_with_alg, prof_perc_with_ems, np.average(predictions_ems), np.average(number_of_ones), numberOfDaysSample, numberOfTrainVectors, year, min_month, max_month)
 
 def optParamsSVCRWithQ(companies, recover): #Opt SVC with profibility
     predictions = []

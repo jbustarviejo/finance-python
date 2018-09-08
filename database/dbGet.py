@@ -128,6 +128,13 @@ class DbGet:
             return False
         return result[0]
 
+    def getCompanyToOptSVCWithMaxAndMin(self, year, max_month, min_month):
+        query = "SELECT h.company_id, COUNT(*) as repeats FROM histories h LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = h.company_id WHERE svmWQ.company_id IS NULL AND YEAR(h.date) = '%s' AND MONTH(h.date) BETWEEN '%s' AND '%s' GROUP BY h.company_id LIMIT 1"  % (year, max_month, min_month)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
     def getCompanyToOptPendingSVMWithQ(self):
         query = "SELECT company_id FROM (SELECT count(*) as count, company_id, MAX(updated_at) as updated_at FROM companiesSVMWithQ2 svmWQ GROUP BY company_id) as t WHERE t.count < 300 AND updated_at < NOW() - INTERVAL 24*60 MINUTE ORDER BY RAND() LIMIT 1"
         result = Database().runQuery(query)
@@ -153,9 +160,9 @@ class DbGet:
             return False
         return result
 
-    def getHistory2(self, company_id, limit):
+    def getHistory2(self, company_id, limit, year, max_month):
         # Get company history in USD
-        query = "SELECT conversion FROM (SELECT histories.open as conversion, histories.date as date FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND date <'2017-01-01' ORDER BY histories.date DESC LIMIT %s) as q ORDER BY q.date" % (company_id, limit)
+        query = "SELECT conversion FROM (SELECT histories.open as conversion, histories.date as date FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND date <= '%s-%s' ORDER BY histories.date DESC LIMIT %s) as q ORDER BY q.date" % (company_id, year, max_month, limit)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False

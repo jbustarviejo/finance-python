@@ -143,7 +143,7 @@ class DbInsert:
         Database().runQuery(query)
 
     #Save optimized SVC of company
-    def saveOptSVC(self, companyId, max, min):
+    def saveOptSVC_old(self, companyId, max, min):
         query = "INSERT INTO companiesSVC (company_id, max_kernel, max_rate, max_repeats, max_samples, max_train_vectors, min_kernel, min_rate, min_repeats, min_samples, min_train_vectors, created_at, updated_at) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', NOW(), NOW()) ON DUPLICATE KEY UPDATE max_rate = IF(VALUES(max_rate) > max_rate, VALUES(max_rate), max_rate), max_kernel = IF(VALUES(max_rate) > max_rate, VALUES(max_kernel), max_kernel), max_repeats = IF(VALUES(max_rate) > max_rate, VALUES(max_repeats), max_repeats), max_samples = IF(VALUES(max_rate) > max_rate, VALUES(max_samples), max_samples), max_train_vectors = IF(VALUES(max_rate) > max_rate, VALUES(max_train_vectors), max_train_vectors), min_rate = IF(VALUES(min_rate) < min_rate, VALUES(min_rate), min_rate), min_kernel = IF(VALUES(min_rate) < min_rate, VALUES(min_kernel), min_kernel), min_repeats = IF(VALUES(min_rate) < min_rate, VALUES(min_repeats), min_repeats), min_samples = IF(VALUES(min_rate) < min_rate, VALUES(min_samples), min_samples), min_train_vectors = IF(VALUES(min_rate) < min_rate, VALUES(min_train_vectors), min_train_vectors)" % (companyId, max["kernel"], max["rate"],  max["repeats"], max["numberOfDaysSample"], max["numberOfTrainVectors"], min["kernel"], min["rate"], min["repeats"], min["numberOfDaysSample"], min["numberOfTrainVectors"])
         Database().runQuery(query)
 
@@ -165,7 +165,7 @@ class DbInsert:
         query = "INSERT INTO companiesSVM4 (company_id, svm, kernel, rate, proba, number_of_days_sample, number_of_train_vectors, profitability_percentage, created_at, updated_at) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s', NOW(), NOW()) ON DUPLICATE KEY UPDATE company_id='%s', svm='%s', kernel='%s', rate='%s', proba='%s', number_of_days_sample='%s', number_of_train_vectors='%s', profitability_percentage='%s'" % (companyId, svm, kernel, rate, proba, numberOfDaysSample, numberOfTrainVectors, prof_perc, companyId, svm, kernel, rate, proba, numberOfDaysSample, numberOfTrainVectors, prof_perc)
         Database().runQuery(query)
 
-    def saveOptSVC(self, companyId, svm, kernel, rate, proba, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems, number_of_ones, numberOfDaysSample, numberOfTrainVectors):
+    def saveOptSVC(self, companyId, svm, kernel, rate, proba, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems, number_of_ones, numberOfDaysSample, numberOfTrainVectors, year, min_month, max_month):
         if (rate == -1 or rate ==-2 or not rate or rate ==""):
             rate = -1
             proba = -1
@@ -175,7 +175,7 @@ class DbInsert:
             number_of_ones = 0
             prof_perc_with_ems = 0
 
-        query = "INSERT INTO companiesSVC (company_id, svm, kernel, rate, proba, number_of_ones, number_of_days_sample, number_of_train_vectors, profitability_percentage, profitability_percentage_with_alg, profitability_percentage_with_ems, rate_ems, created_at, updated_at) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',NOW(), NOW()) ON DUPLICATE KEY UPDATE company_id='%s', svm='%s', kernel='%s', rate='%s', proba='%s', number_of_ones='%s', number_of_days_sample='%s', number_of_train_vectors='%s', profitability_percentage='%s', profitability_percentage_with_alg ='%s', profitability_percentage_with_ems ='%s', rate_ems='%s'" % (companyId, svm, kernel, rate, proba, number_of_ones, numberOfDaysSample, numberOfTrainVectors, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems, companyId, svm, kernel, rate, proba, number_of_ones, numberOfDaysSample, numberOfTrainVectors, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems)
+        query = "INSERT INTO companiesSVC (company_id, svm, kernel, rate, proba, number_of_ones, number_of_days_sample, number_of_train_vectors, profitability_percentage, profitability_percentage_with_alg, profitability_percentage_with_ems, rate_ems, year, min_month, max_month, created_at, updated_at) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', NOW(), NOW()) ON DUPLICATE KEY UPDATE company_id='%s', svm='%s', kernel='%s', rate='%s', proba='%s', number_of_ones='%s', number_of_days_sample='%s', number_of_train_vectors='%s', profitability_percentage='%s', profitability_percentage_with_alg ='%s', profitability_percentage_with_ems ='%s', rate_ems='%s', year='%s', min_month='%s', max_month='%s'" % (companyId, svm, kernel, rate, proba, number_of_ones, numberOfDaysSample, numberOfTrainVectors, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems, year, min_month, max_month, companyId, svm, kernel, rate, proba, number_of_ones, numberOfDaysSample, numberOfTrainVectors, prof_perc, prof_perc_with_alg, prof_perc_with_ems, rate_ems, year, min_month, max_month)
         # print(query)
         Database().runQuery(query)
 

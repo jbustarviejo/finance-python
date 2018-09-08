@@ -64,7 +64,7 @@ class Analize:
             os.waitpid(childP, 0)
 
     #Analyzes companies list array in database
-    def analizeSVCCompanies(self):
+    def analizeSVCCompanies(self, year, min_month, max_month):
         imTheFather = True
         children = []
 
@@ -74,7 +74,7 @@ class Analize:
                 children.append(child)
             else:
                 imTheFather = False
-                self.analizeSVCCompaniesProcess()
+                self.analizeSVCCompaniesProcess(year, min_month, max_month)
                 os._exit(0)
                 break
 
@@ -98,14 +98,12 @@ class Analize:
             # if currency is True:
             #     exit();
 
-    def analizeSVCCompaniesProcess(self):
+    def analizeSVCCompaniesProcess(self, year, min_month, max_month):
         while(True):
-            company = DbGet().getCompanyToOptSVC();
+            company = DbGet().getCompanyToOptSVCWithMaxAndMin(year, min_month, max_month);
 
             if company == False:
                 print("No more companies left")
                 exit()
 
-            optParamsSVCR2(company[0])
-            # if currency is True:
-            # exit();
+            optParamsSVCR2(company[0], company[1], year, min_month, max_month)

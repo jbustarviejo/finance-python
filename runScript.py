@@ -17,7 +17,9 @@ print ("--Staring analysis script--")
 #AllWothQ
 # Analize().analizeSVRAndSVCCompaniesWithQ()
 # All companies for SVC
-Analize().analizeSVCCompanies()
+for year in [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]:
+    for min_month in [1, 4, 7, 10]:
+        Analize().analizeSVCCompanies(year, min_month, min_month+2)
 
 print("\n\n------Analysis script finished------\n")
 
