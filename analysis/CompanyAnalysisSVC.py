@@ -78,8 +78,11 @@ def optParamsSVCR2(company_id, repeats, year, min_month, max_month): #Opt SVC wi
     print ("===> SVCR2 - "+str(company_id)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
 
     data = DbGet().getHistory2(company_id, numberOfDaysSample + numberOfTrainVectors + repeats + 1, year, max_month);
-    if data == False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats + 1:
-        print ("Not enough length. Wanted: "+str(numberOfDaysSample + numberOfTrainVectors + repeats + 1)+". Get: "+str(len(data)))
+    if data is False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats + 1:
+        if data is False:
+            print("Not data in this period")
+        else:
+            print ("Not enough length. Wanted: "+str(numberOfDaysSample + numberOfTrainVectors + repeats + 1)+". Get: "+str(len(data)))
         DbInsert().saveOptSVC(company_id, "svcr", kernel, -1, 0, 0, 0, 0, 0, 0, 0, 0, year, min_month, max_month)
         return -1
 

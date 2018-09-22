@@ -128,8 +128,12 @@ class DbGet:
             return False
         return result[0]
 
-    def getCompanyToOptSVCWithMaxAndMin(self, year, max_month, min_month):
-        query = "SELECT h.company_id, COUNT(*) as repeats FROM histories h LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = h.company_id AND year='%s' AND min_month = '%s' AND max_month = '%s' WHERE svmWQ.company_id IS NULL AND YEAR(h.date) = '%s' AND MONTH(h.date) BETWEEN '%s' AND '%s' GROUP BY h.company_id LIMIT 1"  % (year, min_month, max_month, year, min_month, max_month)
+    def getCompanyToOptSVCWithMaxAndMin(self, year, min_month, max_month):
+        # query = "SELECT h.company_id, COUNT(*) as repeats FROM histories h LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = h.company_id AND year='%s' AND min_month = '%s' AND max_month = '%s' WHERE svmWQ.company_id IS NULL AND YEAR(h.date) = '%s' AND MONTH(h.date) BETWEEN '%s' AND '%s' GROUP BY h.company_id LIMIT 1"  % (year, min_month, max_month, year, min_month, max_month)
+        # Faster!!
+        # query = "SELECT h.company_id, COUNT(*) as repeats FROM histories h WHERE YEAR(h.date) = '%s' AND MONTH(h.date) BETWEEN '%s' AND '%s' AND h.company_id = (SELECT c.id as c_id FROM companies c LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = c.id AND year='%s' AND min_month = '%s' AND max_month = '%s' WHERE svmWQ.company_id IS NULL LIMIT 1) GROUP BY h.company_id LIMIT 1"  % (year, min_month, max_month, year, min_month, max_month)
+        query = "SELECT c_id, count(*) as repeats from (SELECT c.id as c_id FROM companies c LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = c.id AND year='%s' AND min_month = '%s' AND max_month = '%s' WHERE svmWQ.company_id IS NULL LIMIT 1) as c_id LEFT JOIN histories h on h.company_id = c_id AND YEAR(h.date) = '%s' AND MONTH(h.date) BETWEEN '%s' AND '%s' GROUP BY c_id"  % (year, min_month, max_month, year, min_month, max_month)
+
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
@@ -161,8 +165,12 @@ class DbGet:
         return result
 
     def getHistory2(self, company_id, limit, year, max_month):
-        # Get company history in USD
-        query = "SELECT conversion FROM (SELECT histories.open as conversion, histories.date as date FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND date <= '%s-%s' ORDER BY histories.date DESC LIMIT %s) as q ORDER BY q.date" % (company_id, year, max_month, limit)
+        # Get company history in
+        max_month_str = str(max_month)
+        if(max_month<10):
+            max_month_str="0"+max_month_str
+        date = str(year)+"-"+max_month_str+"-01"
+        query = "SELECT conversion FROM (SELECT histories.open as conversion, histories.date as date FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND date <= '%s' ORDER BY histories.date DESC LIMIT %s) as q ORDER BY q.date" % (company_id, date, limit)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
