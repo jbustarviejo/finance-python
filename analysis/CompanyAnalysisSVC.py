@@ -71,7 +71,7 @@ def optParamsSVCR2(company_id, repeats, year, min_month, max_month): #Opt SVC wi
     predictions = []
     # repeats = 244 #244
     kernel = "rbf"
-    numberOfDaysSample = 1
+    numberOfDaysSample = 1 #1
     numberOfTrainVectors = 350 #350
 
     development and print()
@@ -144,6 +144,7 @@ def optParamsSVCR2(company_id, repeats, year, min_month, max_month): #Opt SVC wi
         development and print("Probas = "+str(probas))
         development and print("Number_of_ones = "+str(number_of_ones))
 
+        development and print("\n->Profitability this day = "+str(profitability[finalPos]))
         if(pr["perc_with_alg"]):
             development and print("\n->Alg decided to invest! = "+str(profitability[finalPos]))
             prof_perc_with_alg = prof_perc_with_alg * profitability[finalPos]
@@ -174,13 +175,14 @@ def optParamsSVCR2(company_id, repeats, year, min_month, max_month): #Opt SVC wi
     development and print("avg probas="+str(np.average(probas))+"\r")
     development and print("number_of_ones="+str(number_of_ones)+"\r")
     development and print("avg number_of_ones="+str(np.average(number_of_ones))+"\r")
-    development and print("->Buy & Hold: prof_perc="+str(prof_perc_b_and_h)+"\r")
+    development and print("->Buy & Hold: prof_perc="+str(prof_perc_b_and_h)+" vs  "+str(prod(profitability))+"\r")
     development and print("->Alg: prof_perc_with_alg="+str(prof_perc_with_alg)+"\r")
-    development and print("->EMS: prof_perc_with_ems="+str(prof_perc_with_ems)+"\n")
-    development and print("->Best: prof_perc_better="+str(prof_perc_better)+"\n")
+    development and print("->EMS: prof_perc_with_ems="+str(prof_perc_with_ems)+"\r")
+    development and print("->Best: prof_perc_better="+str(prof_perc_better)+"\r")
+    development and print("->Worst: prof_perc_worst="+str(prof_perc_worst)+"\n")
     development and print("->Worst: prof_perc_worst="+str(prof_perc_worst)+"\n")
 
-    DbInsert().saveOptSVC(company_id, "svcr", kernel, np.average(predictions), np.average(probas), prod(profitability), prof_perc_with_alg, prof_perc_with_ems, np.average(predictions_ems), np.average(number_of_ones), numberOfDaysSample, numberOfTrainVectors, year, min_month, max_month, prof_perc_better, prof_perc_worst)
+    DbInsert().saveOptSVC(company_id, "svcr", kernel, np.average(predictions), np.average(probas), prof_perc_b_and_h, prof_perc_with_alg, prof_perc_with_ems, np.average(predictions_ems), np.average(number_of_ones), numberOfDaysSample, numberOfTrainVectors, year, min_month, max_month, prof_perc_better, prof_perc_worst)
 
 def optParamsSVCRWithQ(companies, recover): #Opt SVC with profibility
     predictions = []
