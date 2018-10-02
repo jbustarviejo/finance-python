@@ -18,16 +18,14 @@ print ("--Staring analysis script--")
 #AllWothQ
 # Analize().analizeSVRAndSVCCompaniesWithQ()
 # All companies for SVC
-Analize().analizeSVCCompanies(2009, 1, 3)
-#
-# years=[2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
-# random.shuffle(years)
-# for year in years:
-#     months = [1, 4, 7, 10]
-#     random.shuffle(months)
-#     for min_month in months:
-#         print("=====> Analize "+str(year)+" month: "+str(min_month))
-#         Analize().analizeSVCCompanies(year, min_month, min_month+2)
+years=[2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
+random.shuffle(years)
+for year in years:
+    months = [1, 4, 7, 10]
+    random.shuffle(months)
+    for min_month in months:
+        print("=====> Analize "+str(year)+" month: "+str(min_month))
+        Analize().analizeSVCCompanies(year, min_month, min_month+2)
 
 print("\n\n------Analysis script finished------\n")
 
