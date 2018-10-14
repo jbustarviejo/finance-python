@@ -128,6 +128,13 @@ class DbGet:
             return False
         return result[0]
 
+    def getCompanyToOptSVM(self):
+        query = "SELECT c_id from (SELECT c.id as c_id FROM companies c LEFT JOIN companiesSVM svmWQ on svmWQ.company_id = c.id WHERE svmWQ.company_id IS NULL LIMIT 1) as c_id LEFT JOIN histories h on h.company_id = c_id AND YEAR(h.date) = '2017' GROUP BY c_id"
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0]
+
     def getCompanyToOptSVCWithMaxAndMin(self, year, min_month, max_month):
         # query = "SELECT h.company_id, COUNT(*) as repeats FROM histories h LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = h.company_id AND year='%s' AND min_month = '%s' AND max_month = '%s' WHERE svmWQ.company_id IS NULL AND YEAR(h.date) = '%s' AND MONTH(h.date) BETWEEN '%s' AND '%s' GROUP BY h.company_id LIMIT 1"  % (year, min_month, max_month, year, min_month, max_month)
         # Faster!!
