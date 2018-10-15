@@ -129,11 +129,19 @@ class DbGet:
         return result[0]
 
     def getCompanyToOptSVM(self):
+        # query = "SELECT c_id from (SELECT c.id as c_id FROM companies c LEFT JOIN companiesSVM svmT on svmT.company_id = c.id LEFT JOIN (SELECT * FROM (SELECT 'linear' as kernel UNION SELECT 'sigmoid' as kernel UNION SELECT 'rbf' as kernel) as Kernel JOIN (SELECT 5 as number_of_days_sample UNION SELECT 19 as number_of_days_sample UNION SELECT 61 as number_of_days_sample UNION SELECT 122 as number_of_days_sample UNION SELECT 244 as number_of_days_sample) as number_of_days_sample JOIN (SELECT 'svr' as svm UNION SELECT 'svrr' as svm UNION SELECT 'svcr' as svm) as svm JOIN (SELECT 5 as number_of_train_vectors UNION SELECT 19 as number_of_train_vectors UNION SELECT 61 as number_of_train_vectors UNION SELECT 122 as number_of_train_vectors UNION SELECT 244 as number_of_train_vectors) as number_of_train_vectors ) as sims on sims.kernel = svmT.kernel AND sims.number_of_train_vectors = svmT.number_of_train_vectors AND svmT.number_of_train_vectors = sims.number_of_train_vectors AND sims.svm = svmT.svm LIMIT 1) as c_id LEFT JOIN histories h on h.company_id = c_id AND YEAR(h.date) = '2017' GROUP BY c_id"
         query = "SELECT c_id from (SELECT c.id as c_id FROM companies c LEFT JOIN companiesSVM svmWQ on svmWQ.company_id = c.id WHERE svmWQ.company_id IS NULL LIMIT 1) as c_id LEFT JOIN histories h on h.company_id = c_id AND YEAR(h.date) = '2017' GROUP BY c_id"
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
         return result[0]
+
+    def isThisCombinationCalculated(self, company_id, kernel, number_of_days_sample, number_of_train_vectors, svm):
+        query = "SELECT COUNT(*)>0 FROM companiesSVM svm WHERE company_id='%s' AND kernel='%s' AND number_of_days_sample = '%s' AND number_of_train_vectors = '%s' AND svm = '%s'" % (company_id, kernel, number_of_days_sample, number_of_train_vectors, svm)
+        result = Database().runQuery(query)
+        if not result or not result[0]:
+            return False
+        return result[0][0] == True
 
     def getCompanyToOptSVCWithMaxAndMin(self, year, min_month, max_month):
         # query = "SELECT h.company_id, COUNT(*) as repeats FROM histories h LEFT JOIN companiesSVC svmWQ on svmWQ.company_id = h.company_id AND year='%s' AND min_month = '%s' AND max_month = '%s' WHERE svmWQ.company_id IS NULL AND YEAR(h.date) = '%s' AND MONTH(h.date) BETWEEN '%s' AND '%s' GROUP BY h.company_id LIMIT 1"  % (year, min_month, max_month, year, min_month, max_month)

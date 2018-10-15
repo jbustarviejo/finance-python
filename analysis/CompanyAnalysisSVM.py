@@ -25,7 +25,9 @@ def optParamsSVM(company_id, withR, svc): #Opt SVC with profibility
 
                 development and print()
                 print ("===> "+str(method)+" - "+str(company_id)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
-
+                if(DbGet().isThisCombinationCalculated(company_id, kernel, numberOfDaysSample, numberOfTrainVectors, method)):
+                    print("Combination already calculated. Continue...")
+                    continue
                 data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats + 1);
                 if data is False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats + 1:
                     if data is False:
@@ -42,8 +44,10 @@ def optParamsSVM(company_id, withR, svc): #Opt SVC with profibility
                 for k in range(1,len(data)):
                     r = data[k][0]/data[k-1][0]
                     profitability.append( r )
-                    if withR:
+                    if method == "svc" or method == "svcr":
                         new_data.append( (r > 1) *1 )
+                    elif withR:
+                        new_data.append( r )
                     else:
                         new_data.append( data[k][0] *1 )
 
@@ -165,7 +169,7 @@ def testPredictionSVM(X, Y, kernel, svc):
 
         development and print("predicted="+str(predictions)+"\r")
     except ValueError:
-        if(sum(x_train) == len(x_train) or sum(x_train) <= 1):
+        if(sum(x_train[-1]) == len(x_train[-1]) or sum(x_train[-1]) <= 1 or sum(y_train) == len(y_train) or sum(y_train) <= 1):
             return {"result": np.asarray([True]), "result_ems": x_test[-1][-1] == y_test, "proba": {0: {1: 1}}, "perc_with_alg": sum(x_train[1])>1, "number_of_ones": sum(X > 0)/len(X), "perc_with_ems": x_test[-1][-1] == 1 } #All are the same
         print((x_train))
         print("ERROR")
