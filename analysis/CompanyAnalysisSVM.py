@@ -12,7 +12,7 @@ development = False
 
 def optParamsSVM(company_id, withR, svc): #Opt SVC with profibility
     predictions = []
-    repeats = 244
+    repeats = 244 #244
     if svc:
         method = "svc"
     else:
@@ -21,7 +21,7 @@ def optParamsSVM(company_id, withR, svc): #Opt SVC with profibility
         method = method + "r"
     for kernel in ["linear", "sigmoid", "rbf"]:
         for numberOfDaysSample in [1, 5, 19, 61, 122, 244]:
-            for numberOfTrainVectors in [5, 19, 61, 122, 244]:
+            for numberOfTrainVectors in [1, 5, 19, 61, 122, 244]:
 
                 development and print()
                 print ("===> "+str(method)+" - "+str(company_id)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
@@ -179,13 +179,35 @@ def testPredictionSVM(X, Y, kernel, svc):
 
     number_of_ones = sum(X > 0)/len(X)
 
-    perc_with_alg = False
-    if(predicted > x_test[-1][-1]):
-        perc_with_alg = True
+    alg_invested = False
+    ems_invested = False
+
+    development and print("last x_test="+str(x_test[-1][-1])+"\r")
 
     if svc:
-        result = (y_test == predicted)
-    else:
-        result = perc_with_alg == (x_test[-1][-1] < y_test)
+        if(predicted == 1):
+            alg_invested = True
+        if(x_test[-1][-1] == 1):
+            ems_invested = True
+            result_ems_is_right = (y_test == 1)
+        else:
+            result_ems_is_right = (y_test == 0)
 
-    return {"result": (result), "result_ems": x_test[-1][-1] == y_test, "proba": proba , "perc_with_alg": perc_with_alg, "number_of_ones": number_of_ones, "perc_with_ems": x_test[-1][-1] == 1}
+        result_alg_is_right = (y_test == predicted)
+    else:
+        try:
+            pre_last_elem=x_test[-1][-2]
+        except IndexError:
+            try:
+                pre_last_elem=x_test[-2][-1]
+            except IndexError:
+                pre_last_elem=x_train[-1][-1]
+        development and print("pre-last x_test="+str(pre_last_elem)+"\r")
+        if(predicted > x_test[-1][-1]):
+            alg_invested = True
+        if(x_test[-1][-1] > pre_last_elem):
+            ems_invested = True
+        result_alg_is_right = ( alg_invested == (x_test[-1][-1] < y_test) )
+        result_ems_is_right = ( ems_invested == (x_test[-1][-1] < y_test) )
+
+    return {"result": (result_alg_is_right), "result_ems": result_ems_is_right, "proba": proba , "perc_with_alg": alg_invested, "number_of_ones": number_of_ones, "perc_with_ems": ems_invested}
