@@ -170,7 +170,10 @@ def testPredictionSVM(X, Y, kernel, svc):
         development and print("predicted="+str(predictions)+"\r")
     except ValueError:
         if(sum(x_train[-1]) == len(x_train[-1]) or sum(x_train[-1]) <= 1 or sum(y_train) == len(y_train) or sum(y_train) <= 1):
-            return {"result": np.asarray([True]), "result_ems": x_test[-1][-1] == y_test, "proba": {0: {1: 1}}, "perc_with_alg": sum(x_train[1])>1, "number_of_ones": sum(X > 0)/len(X), "perc_with_ems": x_test[-1][-1] == 1 } #All are the same
+            last_test_item = x_test[-1]
+            if(len(last_test_item)>1):
+                last_test_item = last_test_item[-1]
+            return {"result": np.asarray([last_test_item == y_test]), "result_ems": last_test_item == y_test, "proba": {0: {1: 1}}, "perc_with_alg": last_test_item == 1, "number_of_ones": sum(X > 0)/len(X), "perc_with_ems": last_test_item == 1 } #All are the same
         print((x_train))
         print("ERROR")
         raise
