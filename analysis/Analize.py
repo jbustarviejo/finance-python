@@ -110,7 +110,7 @@ class Analize:
             optParamsSVCR2(company[0], company[1], year, min_month, max_month)
 
     #Analyzes companies list array in database
-    def analizeSVMCompanies(self):
+    def analizeSVMCompanies(self, year):
         imTheFather = True
         children = []
 
@@ -120,7 +120,7 @@ class Analize:
                 children.append(child)
             else:
                 imTheFather = False
-                self.analizeSVMCompaniesProcess()
+                self.analizeSVMCompaniesProcess(year)
                 os._exit(0)
                 break
 
@@ -128,14 +128,14 @@ class Analize:
         for childP in children:
             os.waitpid(childP, 0)
 
-    def analizeSVMCompaniesProcess(self):
+    def analizeSVMCompaniesProcess(self, year):
         while(True):
-            company = DbGet().getCompanyToOptSVM();
+            company = DbGet().getCompanyToOptSVM(year);
 
             if company == False:
                 print("No more companies left")
                 exit()
 
-            optParamsSVM(company[0], withR=False, svc=False)
-            optParamsSVM(company[0], withR=True, svc=False)
-            optParamsSVM(company[0], withR=True, svc=True)
+            # optParamsSVM(company[0], year, withR=False, svc=False) #SVR
+            optParamsSVM(company[0], year, withR=True, svc=False) #SVRR
+            # optParamsSVM(company[0], year, withR=True, svc=True) #SVC

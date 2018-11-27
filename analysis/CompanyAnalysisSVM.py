@@ -10,7 +10,7 @@ from functools import reduce
 
 development = False
 
-def optParamsSVM(company_id, withR, svc): #Opt SVC with profibility
+def optParamsSVM(company_id, year, withR, svc): #Opt SVC with profibility
     predictions = []
     repeats = 244 #244
     if svc:
@@ -23,12 +23,11 @@ def optParamsSVM(company_id, withR, svc): #Opt SVC with profibility
         for numberOfDaysSample in [1, 5, 19, 61, 122, 244]:
             for numberOfTrainVectors in [1, 5, 19, 61, 122, 244]:
 
-                development and print()
-                print ("===> "+str(method)+" - "+str(company_id)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
-                if(DbGet().isThisCombinationCalculated(company_id, kernel, numberOfDaysSample, numberOfTrainVectors, method)):
+                print ("===> "+str(method)+" - "+str(company_id)+"@"+str(year)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
+                if(DbGet().isThisCombinationCalculated(company_id, year, kernel, numberOfDaysSample, numberOfTrainVectors, method)):
                     print("Combination already calculated. Continue...")
                     continue
-                data = DbGet().getHistory(company_id, numberOfDaysSample + numberOfTrainVectors + repeats + 1);
+                data = DbGet().getHistory(company_id, year, numberOfDaysSample + numberOfTrainVectors + repeats + 1);
                 if data is False or len(data) < numberOfDaysSample + numberOfTrainVectors + repeats + 1:
                     if data is False:
                         print("Not data in this period")
@@ -78,8 +77,7 @@ def optParamsSVM(company_id, withR, svc): #Opt SVC with profibility
                 prof_perc_better = 1
 
                 for i in range(0, repeats):
-                    development and print()
-                    print ("==> C"+str(company_id)+": "+str(method)+" "+str(i+1)+"/"+str(repeats)+". Kernel: "+str(kernel)+". Days: "+ str(numberOfDaysSample)+ ". TrainVectors: "+str(numberOfTrainVectors))
+                    development and print ("==> C"+str(company_id)+": "+str(method)+" "+str(i+1)+"/"+str(repeats)+". Kernel: "+str(kernel)+". Days: "+ str(numberOfDaysSample)+ ". TrainVectors: "+str(numberOfTrainVectors))
                     finalPos = i+1-repeats+len(X)
                     development and print("finalPos="+str(finalPos))
                     if finalPos != 0:
