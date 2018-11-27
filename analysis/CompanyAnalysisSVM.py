@@ -19,9 +19,9 @@ def optParamsSVM(company_id, year, withR, svc): #Opt SVC with profibility
         method = "svr"
     if withR:
         method = method + "r"
-    for kernel in ["linear", "sigmoid", "rbf"]:
-        for numberOfDaysSample in [1, 5, 19, 61, 122, 244]:
-            for numberOfTrainVectors in [1, 5, 19, 61, 122, 244]:
+    for kernel in ["rbf"]: #["linear", "sigmoid", "rbf"]:
+        for numberOfDaysSample in [5]: #[1, 5, 19, 61, 122, 244]:
+            for numberOfTrainVectors in [5]: #[1, 5, 19, 61, 122, 244]:
 
                 print ("===> "+str(method)+" - "+str(company_id)+"@"+str(year)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
                 if(DbGet().isThisCombinationCalculated(company_id, year, kernel, numberOfDaysSample, numberOfTrainVectors, method)):
@@ -33,7 +33,7 @@ def optParamsSVM(company_id, year, withR, svc): #Opt SVC with profibility
                         print("Not data in this period")
                     else:
                         print ("Not enough length. Wanted: "+str(numberOfDaysSample + numberOfTrainVectors + repeats + 1)+". Get: "+str(len(data)))
-                    DbInsert().saveOptSVMResult(company_id, method, kernel, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1)
+                    DbInsert().saveOptSVMResult(company_id, method, kernel, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, -1)
                     return -1
 
                 new_data = []
@@ -136,7 +136,7 @@ def optParamsSVM(company_id, year, withR, svc): #Opt SVC with profibility
                 development and print("->Best: prof_perc_better="+str(prof_perc_better)+"\r")
                 development and print("->Worst: prof_perc_worst="+str(prof_perc_worst)+"\n")
 
-                DbInsert().saveOptSVMResult(company_id, method, kernel, np.average(predictions), np.average(probas), prof_perc_b_and_h, prof_perc_with_alg, prof_perc_with_ems, np.average(predictions_ems), np.average(number_of_ones), numberOfDaysSample, numberOfTrainVectors, prof_perc_better, prof_perc_worst)
+                DbInsert().saveOptSVMResult(company_id, method, kernel, np.average(predictions), np.average(probas), prof_perc_b_and_h, prof_perc_with_alg, prof_perc_with_ems, np.average(predictions_ems), np.average(number_of_ones), numberOfDaysSample, numberOfTrainVectors, prof_perc_better, prof_perc_worst, year)
 
 def testPredictionSVM(X, Y, kernel, svc):
     #Train
