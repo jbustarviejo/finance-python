@@ -171,9 +171,9 @@ class DbGet:
         return result
 
     #Get history of a company by its id
-    def getHistory(self, year, company_id, limit):
+    def getHistory(self, company_id, year, limit):
         # Get company history in USD
-        query = "SELECT * from (SELECT histories.open as conversion FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND YEAR(date) <= '%s' ORDER BY histories.date DESC LIMIT %s) as query where conversion is not null" % (company_id, year, limit)
+        query = "SELECT conversion from (SELECT histories.open as conversion, date FROM histories left join currencies on currencies.symbol = histories.currency WHERE company_id = '%s' AND YEAR(date) <= '%s' ORDER BY histories.date DESC LIMIT %s) as query where conversion is not null order by date ASC" % (company_id, year, limit)
         result = Database().runQuery(query)
         if not result or not result[0]:
             return False
