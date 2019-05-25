@@ -4,3 +4,4 @@ admin.site.unregister(Group)
 admin.site.unregister(User)
 
 from .sector import SectorAdmin
+from .industry import IndustryAdmin

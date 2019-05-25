@@ -1,9 +1,11 @@
 from django.db import models
+from scrap.models import Sector
 
-class Sector(models.Model):
+class Industry(models.Model):
 
     class Meta:
-        unique_together = ['name', 'slug']
+        verbose_name_plural = 'Industries'
+        unique_together = ['name', 'slug', 'sector_id']
 
     name = models.CharField(
         help_text="Sector name",
@@ -13,6 +15,11 @@ class Sector(models.Model):
     slug = models.CharField(
         help_text="Slug",
         max_length=50
+    )
+
+    sector_id = models.ForeignKey(
+        Sector,
+        on_delete=models.CASCADE
     )
 
     updated_at = models.DateTimeField(

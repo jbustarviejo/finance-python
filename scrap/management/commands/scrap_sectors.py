@@ -19,4 +19,7 @@ class Command(BaseCommand):
             sectorLink = matchingElement.xpath(".//a['@class=mod-ui-link mod-sector-performance__sector-link']")[0].attrib['href'];
             sectorSize = matchingElement.xpath(".//td/text()")
 
-            Sector(name=sectorName, slug=sectorName.replace(" ","-").replace("&","and").lower()).save()
+            sector, created = Sector.objects.get_or_create(name=sectorName, slug=sectorName.replace(" ","-").replace("&","and").lower())
+            sector.save()
+
+        print("Finished! 🏁")
