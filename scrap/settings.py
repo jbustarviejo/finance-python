@@ -123,3 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+#Custom
+cookieHeader = "FTSession=07sUSM-VNEJn05kEjJ1c8LIFzwAAAWrzo9cCwsI.MEUCIHCkjeTM69FZ-yNEU609xogqo5O0rxyKuOLxr21ATpiYAiEA6UcjZXw_NiAmS9sHkdadmftx98al3uTP6pbhnApMYGg; FTSession_s=07sUSM-VNEJn05kEjJ1c8LIFzwAAAWrzo9cCwsI.MEUCIEO6e919Uqz_OprHyHK5kJqNr_JaZ8NQi41uBO96pE3XAiEAitQWoRG7hec0864isJz3p1vVsWz2wHHpCCsIEQOodS0;"

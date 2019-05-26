@@ -3,6 +3,9 @@ from scrap.models import Sector
 
 class Industry(models.Model):
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = 'Industries'
         unique_together = ['name', 'slug', 'sector_id']
@@ -19,7 +22,8 @@ class Industry(models.Model):
 
     sector_id = models.ForeignKey(
         Sector,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='industries'
     )
 
     updated_at = models.DateTimeField(
@@ -34,4 +38,4 @@ class Industry(models.Model):
 
     @property
     def link(self):
-        return "https://markets.ft.com/data/sectors/" + self.slug
+        return "https://markets.ft.com/data/sectors/" + self.sector_id.slug + "/" + self.slug

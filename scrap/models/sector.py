@@ -2,6 +2,9 @@ from django.db import models
 
 class Sector(models.Model):
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         unique_together = ['name', 'slug']
 
@@ -28,3 +31,7 @@ class Sector(models.Model):
     @property
     def link(self):
         return "https://markets.ft.com/data/sectors/" + self.slug
+
+    @property
+    def industries_count(self):
+        return self.industries.count()
