@@ -1,4 +1,5 @@
 from django.db import models
+
 from scrap.models import Sector
 
 class Industry(models.Model):
@@ -11,7 +12,7 @@ class Industry(models.Model):
         unique_together = ['name', 'slug', 'sector_id']
 
     name = models.CharField(
-        help_text="Sector name",
+        help_text="Industry name",
         max_length=50
     )
 
@@ -38,4 +39,12 @@ class Industry(models.Model):
 
     @property
     def link(self):
-        return "https://markets.ft.com/data/sectors/" + self.sector_id.slug + "/" + self.slug
+        return " http://markets.ft.com/research/Browse-Companies/" + self.sector_id.slug.lower() + "/" + self.slug.lower()
+
+    @property
+    def companies_count(self):
+        return self.companies.count()
+
+    @property
+    def companies_scraping_link(self):
+        return "http://markets.ft.com/Research/Remote/UK/BrowseCompanies/UpdateCompanyList/?industry=" + self.name.replace("&","%26") + "&RowsPerPage=100"

@@ -7,7 +7,7 @@ from scrap.actions import ExportCsvMixin
 
 @admin.register(Sector)
 class SectorAdmin(admin.ModelAdmin, ExportCsvMixin):
-    list_display = ('name', 'industries_count', 'show_link', 'updated_at', 'created_at')
+    list_display = ('name', 'industries_count', 'sector_link', 'updated_at', 'created_at')
     search_fields = ['name', 'slug']
     list_filter = ('updated_at', 'created_at')
     readonly_fields = ('link',)
@@ -23,7 +23,7 @@ class SectorAdmin(admin.ModelAdmin, ExportCsvMixin):
     def industries_count(self, obj):
         return obj._industries_count
 
-    def show_link(self, obj):
-        return format_html('<a target="blank" href="{}">{}</a>',obj.link, obj.link)
-
     industries_count.admin_order_field = '_industries_count'
+
+    def sector_link(self, obj):
+        return format_html('<a target="blank" href="{}">{}</a>',obj.link, obj.link)

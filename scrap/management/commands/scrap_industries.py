@@ -6,11 +6,11 @@ from django.db.models import Q
 from django.db import transaction
 from django.core.management.base import BaseCommand
 
-from scrap import settings
+from config import settings
 from scrap.models import Sector, Industry
 
 class Command(BaseCommand):
-    help = "Industries sectors data from FT.com"
+    help = "Scrap industries data from FT.com"
 
     @transaction.non_atomic_requests
     def handle(self, *args, **kwargs):
@@ -21,7 +21,7 @@ class Command(BaseCommand):
                 print("Finished! 🏁")
                 exit()
 
-            headers = {"Cookie": settings.cookieHeader}
+            headers = {"Cookie": settings.cookie_header}
 
             page = requests.get(sector.link, headers=headers)
             tree = html.fromstring(page.content)

@@ -25,7 +25,7 @@ SECRET_KEY = '-nd(3&0$2@u-my(et$+hajdels@+iza1mgxy=qt@aar6j^xg13'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'scrap.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'scrap.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
@@ -126,4 +126,5 @@ STATIC_URL = '/static/'
 
 
 #Custom
-cookieHeader = "FTSession=07sUSM-VNEJn05kEjJ1c8LIFzwAAAWrzo9cCwsI.MEUCIHCkjeTM69FZ-yNEU609xogqo5O0rxyKuOLxr21ATpiYAiEA6UcjZXw_NiAmS9sHkdadmftx98al3uTP6pbhnApMYGg; FTSession_s=07sUSM-VNEJn05kEjJ1c8LIFzwAAAWrzo9cCwsI.MEUCIEO6e919Uqz_OprHyHK5kJqNr_JaZ8NQi41uBO96pE3XAiEAitQWoRG7hec0864isJz3p1vVsWz2wHHpCCsIEQOodS0;"
+cookieHeader = "FTSession=07sUSM-VNEJn05kEjJ1c8LIFzwAAAWr65LT1w8I.MEUCIQC38x7t5Wn9Y8CRR_3QdM5pacv2hMHDsWRAiB2pKyO9SAIgTBey3r3ROTiF1eMIIziY2cTmnVEApe_YnSTOfp_9tsk; FTSession_s=07sUSM-VNEJn05kEjJ1c8LIFzwAAAWr65LTzw8I.MEYCIQCjTxooCMx7QQ9_I8sQjXskxBK5J4Ts41odkF1QvBZYgwIhAL_VUHPXrW09jobQrzUfbtbucylf2r68M2JBZkbl8ju3;"
+number_of_threads = 1
