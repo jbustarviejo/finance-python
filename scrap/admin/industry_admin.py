@@ -7,9 +7,9 @@ from scrap.actions import ExportCsvMixin
 
 @admin.register(Industry)
 class IndustryAdmin(admin.ModelAdmin, ExportCsvMixin):
-    list_display = ('name', 'sector_id', 'industry_link', 'companies_count', 'updated_at', 'created_at')
+    list_display = ('name', 'sector', 'industry_link', 'companies_count', 'updated_at', 'created_at')
     search_fields = ['name', 'slug']
-    list_filter = ('updated_at', 'created_at', 'sector_id')
+    list_filter = ('updated_at', 'created_at', 'sector')
     actions = ['export_as_csv']
 
     def industry_link(self, obj):

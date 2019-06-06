@@ -33,15 +33,14 @@ class Command(BaseCommand):
         #Father must wait to all children before continue
         for childP in children:
             os.waitpid(childP, 0)
+            print("Finished! 🏁")
 
     #Get companies list array
     @transaction.non_atomic_requests
     def scrapCompaniesList(self):
         time_threshold = timezone.now() - timezone.timedelta(hours=24)
-        # industry = Industry.objects.annotate(total_companies=Count('companies')).filter(Q(updated_at__isnull=True) | Q(updated_at__lt=time_threshold) | Q(total_companies__lte=0) ).order_by('?').first()
-        industry = Industry.objects.get(name="Tobacco")
+        industry = Industry.objects.annotate(total_companies=Count('companies')).filter(Q(updated_at__isnull=True) | Q(updated_at__lt=time_threshold) | Q(total_companies__lte=0) ).order_by('?').first()
         if not industry:
-            print("Finished! 🏁")
             return True
 
         print("->Scrapping industry: %s" % (industry.name),)
@@ -75,7 +74,7 @@ class Command(BaseCommand):
                 name=matchingElement.text,
                 symbol=companyLink[companyLink.index("?s=")+3:],
                 link=companyLink,
-                industry_id=industry
+                industry=industry
             )
             companies_count+=1
             company.save()

@@ -9,7 +9,7 @@ class Industry(models.Model):
 
     class Meta:
         verbose_name_plural = 'Industries'
-        unique_together = ['name', 'slug', 'sector_id']
+        unique_together = ['name', 'slug', 'sector']
 
     name = models.CharField(
         help_text="Industry name",
@@ -21,7 +21,7 @@ class Industry(models.Model):
         max_length=50
     )
 
-    sector_id = models.ForeignKey(
+    sector = models.ForeignKey(
         Sector,
         on_delete=models.CASCADE,
         related_name='industries'
@@ -39,7 +39,7 @@ class Industry(models.Model):
 
     @property
     def link(self):
-        return " http://markets.ft.com/research/Browse-Companies/" + self.sector_id.slug.lower() + "/" + self.slug.lower()
+        return " http://markets.ft.com/research/Browse-Companies/" + self.sector.slug.lower() + "/" + self.slug.lower()
 
     @property
     def companies_count(self):

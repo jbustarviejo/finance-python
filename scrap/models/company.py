@@ -10,7 +10,7 @@ class Company(models.Model):
 
     class Meta:
         verbose_name_plural = 'Companies'
-        unique_together = ['name', 'symbol', 'industry_id']
+        unique_together = ['name', 'symbol', 'industry']
 
     name = models.CharField(
         help_text="Company name",
@@ -40,7 +40,7 @@ class Company(models.Model):
         null=True
     )
 
-    industry_id = models.ForeignKey(
+    industry = models.ForeignKey(
         Industry,
         on_delete=models.CASCADE,
         related_name='companies'
@@ -60,3 +60,7 @@ class Company(models.Model):
         auto_now_add=True,
         help_text="Creation time",
     )
+
+    @property
+    def info_scraping_link(self):
+        return "https://markets.ft.com/data/investment-trust/tearsheet/summary?s=" + self.symbol

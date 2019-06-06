@@ -32,7 +32,7 @@ class Command(BaseCommand):
                 industry, created = Industry.objects.get_or_create(
                     name=industry_name,
                     slug=industry_name.replace(" ","-").replace("&","and").lower(),
-                    sector_id=sector
+                    sector=sector
                 )
                 industry.save()
                 industries_count+=1
