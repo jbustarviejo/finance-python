@@ -16,5 +16,7 @@ Install python3 from python.org
 MAC: brew install python3
 
 #Run all
-cd scrap-python2
-git pull && python3 analysisScript.py
+./manage.py scrap_sectors
+./manage.py scrap_industries
+./manage.py scrap_companies
+./manage.py scrap_companies_info

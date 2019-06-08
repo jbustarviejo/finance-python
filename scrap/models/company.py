@@ -46,9 +46,16 @@ class Company(models.Model):
         related_name='companies'
     )
 
-    histories = JSONField(
+    history = JSONField(
         help_text="Company full history",
-        null=True
+        null=True,
+        blank=True
+    )
+
+    history_updated_at = models.DateTimeField(
+        help_text="Updated history time",
+        null=True,
+        blank=True
     )
 
     updated_at = models.DateTimeField(
@@ -64,3 +71,46 @@ class Company(models.Model):
     @property
     def info_scraping_link(self):
         return "https://markets.ft.com/data/investment-trust/tearsheet/summary?s=" + self.symbol
+
+    def history_scraping_link(self):
+        return "https://markets.ft.com/data/chartapi/series"
+
+    def history_payload(self):
+        return {
+            "days":36500, #100 years
+            "dataNormalized":False,
+            "dataPeriod":"Day",
+            "dataInterval":1,
+            "endOffsetDays":0,
+            "exchangeOffset":0,
+            "realtime":False,
+            "yFormat":"0.###",
+            "timeServiceFormat":"JSON",
+            "rulerIntradayStart":26,
+            "rulerIntradayStop":3,
+            "rulerInterdayStart":10957,
+            "rulerInterdayStop":365,
+            "returnDateType":"ISO8601",
+            "elements":[
+                {
+                    "Label":"d475c065",
+                    "Type":"price",
+                    "Symbol":str(self.xid),
+                    "OverlayIndicators":[],
+                    "Params":{}
+                },
+                {
+                    "Label":"079e5104",
+                    "Type":"volume",
+                    "Symbol":str(self.xid),
+                    "OverlayIndicators":[],
+                    "Params":{}
+                }
+            ]
+        }
+
+    def history_headers(self):
+        return {
+            "Content-Type": "application/json",
+            "Content-Length": "999999"
+        }
