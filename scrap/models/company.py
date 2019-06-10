@@ -46,6 +46,55 @@ class Company(models.Model):
         related_name='companies'
     )
 
+    incorporated = models.CharField(
+        help_text="Incorporation year of the company",
+        max_length=100,
+        null=True,
+        blank=True
+    )
+
+    employees = models.CharField(
+        help_text="Number of employees of the company",
+        max_length=100,
+        null=True,
+        blank=True
+    )
+
+    revenue = models.CharField(
+        help_text="Revenue in the local currency",
+        max_length=100,
+        null=True,
+        blank=True
+    )
+
+    net_income = models.CharField(
+        help_text="Web of the company",
+        max_length=100,
+        null=True,
+        blank=True
+    )
+
+    website = models.CharField(
+        help_text="Web of the company",
+        max_length=300,
+        null=True,
+        blank=True
+    )
+
+    location = models.CharField(
+        help_text="Headquarters address",
+        max_length=5000,
+        null=True,
+        blank=True
+    )
+
+    description = models.CharField(
+        help_text="About the company",
+        max_length=10000,
+        null=True,
+        blank=True
+    )
+
     history = JSONField(
         help_text="Company full history",
         null=True,
@@ -54,6 +103,12 @@ class Company(models.Model):
 
     history_updated_at = models.DateTimeField(
         help_text="Updated history time",
+        null=True,
+        blank=True
+    )
+
+    profile_updated_at = models.DateTimeField(
+        help_text="Updated profile time",
         null=True,
         blank=True
     )
@@ -71,6 +126,9 @@ class Company(models.Model):
     @property
     def info_scraping_link(self):
         return "https://markets.ft.com/data/investment-trust/tearsheet/summary?s=" + self.symbol
+
+    def profile_scraping_link(self):
+        return "https://markets.ft.com/data/equities/tearsheet/profile?s=" + self.symbol
 
     def history_scraping_link(self):
         return "https://markets.ft.com/data/chartapi/series"

@@ -6,7 +6,7 @@ from scrap.actions import ExportCsvMixin
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin, ExportCsvMixin):
-    list_display = ('name', 'symbol', 'currency', 'xid', 'show_link', 'industry','updated_at', 'created_at')
+    list_display = ('name', 'symbol', 'currency', 'employees', 'revenue', 'net_income', 'xid', 'show_link', 'industry','updated_at', 'created_at')
     search_fields = ['name', 'symbol']
     list_filter = ('currency', 'updated_at', 'created_at', 'industry')
     actions = ['export_as_csv']
