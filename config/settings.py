@@ -127,4 +127,4 @@ STATIC_URL = '/static/'
 
 #Custom
 cookieHeader = "FTSession=07sUSM-VNEJn05kEjJ1c8LIFzwAAAWr65LT1w8I.MEUCIQC38x7t5Wn9Y8CRR_3QdM5pacv2hMHDsWRAiB2pKyO9SAIgTBey3r3ROTiF1eMIIziY2cTmnVEApe_YnSTOfp_9tsk; FTSession_s=07sUSM-VNEJn05kEjJ1c8LIFzwAAAWr65LTzw8I.MEYCIQCjTxooCMx7QQ9_I8sQjXskxBK5J4Ts41odkF1QvBZYgwIhAL_VUHPXrW09jobQrzUfbtbucylf2r68M2JBZkbl8ju3;"
-number_of_threads = 10
+number_of_threads = 1

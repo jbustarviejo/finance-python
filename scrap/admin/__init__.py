@@ -7,3 +7,4 @@ from .sector_admin import SectorAdmin
 from .industry_admin import IndustryAdmin
 from .company_admin import CompanyAdmin
 from .currency_admin import CurrencyAdmin
+from .analisys_admin import AnalisysAdmin

@@ -113,6 +113,12 @@ class Company(models.Model):
         blank=True
     )
 
+    svm_updated_at = models.DateTimeField(
+        help_text="Updated SVM time",
+        null=True,
+        blank=True
+    )
+
     updated_at = models.DateTimeField(
         help_text="Updated time",
         null=True
@@ -172,3 +178,6 @@ class Company(models.Model):
             "Content-Type": "application/json",
             "Content-Length": "999999"
         }
+
+    def getHistory(self, length):
+        return self.history[-length:]
