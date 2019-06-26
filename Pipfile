@@ -14,6 +14,8 @@ sklearn = "*"
 scipy = "*"
 django = "*"
 psycopg2-binary = "*"
+pyentrp = "*"
+statsmodels = "*"
 
 [requires]
 python_version = "3.7"

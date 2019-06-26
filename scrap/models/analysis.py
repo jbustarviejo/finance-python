@@ -3,6 +3,8 @@ from django.contrib.postgres.fields import JSONField
 
 from scrap.models import Company
 
+from config import settings
+
 class Analisys(models.Model):
 
     class Meta:
@@ -44,7 +46,16 @@ class Analisys(models.Model):
         blank=True
     )
 
+    permutation_entropy = JSONField(
+        null=True,
+        blank=True
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         help_text="Creation time",
     )
+
+    def getHistoryForEntropy(self):
+        length = self.number_of_days_sample + self.number_of_train_vectors + settings.repeats -1
+        return self.company.history[-length:]

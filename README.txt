@@ -20,3 +20,9 @@ MAC: brew install python3
 ./manage.py scrap_industries
 ./manage.py scrap_companies
 ./manage.py scrap_companies_info
+
+
+#Check some predictors
+
+http://www.statsmodels.org/dev/install.html
+https://machinelearningmastery.com/time-series-forecasting-methods-in-python-cheat-sheet/

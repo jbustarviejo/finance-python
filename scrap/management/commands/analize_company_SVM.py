@@ -12,7 +12,7 @@ from django.core.management.base import BaseCommand
 from config import settings
 
 class Command(BaseCommand):
-    help = "Scrap sectors data from FT.com"
+    help = "Analize company SVM data from FT.com"
 
     @transaction.non_atomic_requests
     def handle(self, *args, **kwargs):
@@ -52,7 +52,7 @@ class Command(BaseCommand):
 
     def optParamsSVC(self, company, svmType):
         predictions = []
-        repeats = 244
+        repeats = settings.repeats
         for kernel in ["linear", "sigmoid", "rbf"]:
             for numberOfDaysSample in [5, 19, 61, 122, 244]:
                 for numberOfTrainVectors in [5, 19, 61, 122, 244]:
@@ -87,7 +87,7 @@ class Command(BaseCommand):
             print ("Not enough length")
             return -1
 
-        data = [s['open'] for s in data] #Transform tuples to int array
+        data = [s['open'] for s in data] #Transform tuples to number array
 
         if profibility is True:
             for k in reversed(range(1,len(data))):
