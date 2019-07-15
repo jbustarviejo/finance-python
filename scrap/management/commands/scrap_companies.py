@@ -8,7 +8,7 @@ from django.db.models import Q, Count
 from django.db import transaction
 from django.core.management.base import BaseCommand
 
-from config import settings
+from config.settings import local as settings
 from scrap.models import Industry, Company
 
 class Command(BaseCommand):

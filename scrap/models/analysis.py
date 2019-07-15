@@ -24,6 +24,13 @@ class Analisys(models.Model):
         blank=True
     )
 
+    grade = models.CharField(
+        help_text="Grade of the kernel",
+        max_length=100,
+        null=True,
+        blank=True
+    )
+
     svm = models.CharField(
         help_text="SVM type",
         max_length=100,
@@ -42,11 +49,6 @@ class Analisys(models.Model):
     )
 
     number_of_train_vectors = models.IntegerField(
-        null=True,
-        blank=True
-    )
-
-    permutation_entropy = JSONField(
         null=True,
         blank=True
     )

@@ -7,7 +7,7 @@ from scrap.actions import ExportCsvMixin
 
 @admin.register(Analisys)
 class AnalisysAdmin(admin.ModelAdmin, ExportCsvMixin):
-    list_display = ('company', 'kernel', 'svm', 'rate', 'number_of_days_sample', 'number_of_train_vectors', 'permutation_entropy','created_at')
+    list_display = ('company', 'kernel', 'svm', 'rate', 'number_of_days_sample', 'number_of_train_vectors','created_at')
     search_fields = ['kernel', 'svm']
     list_filter = ('kernel', 'svm')
     actions = ['export_as_csv']

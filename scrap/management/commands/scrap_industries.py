@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.db import transaction
 from django.core.management.base import BaseCommand
 
-from config import settings
+from config.settings import local as settings
 from scrap.models import Sector, Industry
 
 class Command(BaseCommand):

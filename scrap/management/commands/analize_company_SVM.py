@@ -9,7 +9,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.core.management.base import BaseCommand
 
-from config import settings
+from config.settings import local as settings
 
 class Command(BaseCommand):
     help = "Analize company SVM data from FT.com"

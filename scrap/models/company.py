@@ -113,8 +113,8 @@ class Company(models.Model):
         blank=True
     )
 
-    svm_updated_at = models.DateTimeField(
-        help_text="Updated SVM time",
+    analysis_updated_at = models.DateTimeField(
+        help_text="Updated analysis time",
         null=True,
         blank=True
     )
