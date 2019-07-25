@@ -9,7 +9,7 @@ class Analisys(models.Model):
 
     class Meta:
         verbose_name_plural = 'Analysis'
-        unique_together = ['company', 'kernel', 'svm', 'number_of_days_sample', 'number_of_train_vectors']
+        unique_together = ['company', 'degree', 'svm', 'number_of_days_sample']
 
     company = models.ForeignKey(
         Company,
@@ -17,14 +17,7 @@ class Analisys(models.Model):
         related_name='companies'
     )
 
-    kernel = models.CharField(
-        help_text="Kernel of the SVM",
-        max_length=100,
-        null=True,
-        blank=True
-    )
-
-    grade = models.CharField(
+    degree = models.CharField(
         help_text="Grade of the kernel",
         max_length=100,
         null=True,
@@ -44,11 +37,6 @@ class Analisys(models.Model):
     )
 
     number_of_days_sample = models.IntegerField(
-        null=True,
-        blank=True
-    )
-
-    number_of_train_vectors = models.IntegerField(
         null=True,
         blank=True
     )
