@@ -181,3 +181,7 @@ class Company(models.Model):
 
     def getHistory(self, length):
         return self.history[-length:]
+
+    def getHistoryOpen(self, length):
+        data =  self.history[-length:]
+        return [s['open'] for s in data] #Transform tuples to number array. Take the open

@@ -12,10 +12,11 @@ lxml = "*"
 requests = "*"
 sklearn = "*"
 scipy = "*"
-django = "*"
+django = ">2.2"
 psycopg2-binary = "*"
 pyentrp = "*"
 statsmodels = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.7"
