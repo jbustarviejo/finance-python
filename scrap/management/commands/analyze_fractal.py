@@ -2,6 +2,10 @@ import os
 import numpy as np
 import operator
 import nolds
+import matplotlib
+import matplotlib.pyplot as plt
+from pylab import *
+
 from sklearn.svm import SVR
 from scrap.models import Analisys, Company
 
@@ -14,7 +18,7 @@ from config.settings import local as settings
 
 class Command(BaseCommand):
     help = "Analize company SVM data from FT.com. analize_fractal"
-    debug=False
+    debug=True
 
     @transaction.non_atomic_requests
     def handle(self, *args, **kwargs):
@@ -54,41 +58,118 @@ class Command(BaseCommand):
 
     def analysis(self, company):
         # Get history
-        history=company.getHistoryOpen(4)
+        history=company.getHistoryOpen(50)
+        # print("history", history)
 
         # Initialize variables
         len_history = len(history)
-        dists = [[0 for x in range(len_history)] for y in range(len_history-1)]
-        dmin=None
-        dmax=None
+        self.debug and print("len_history", len_history)
 
-        # Calculate distances matrix, get dmax and d min
-        for i in range(0,len_history-1):
-            for j in range(i,len_history):
-                dists[i][j] = abs(history[i]-history[j])
-                if (dmin is None or dists[i][j] < dmin) and dists[i][j] > 0:
-                    dmin = dists[i][j]
-                if dmax is None or dists[i][j] > dmax:
-                    dmax = dists[i][j]
+        if len_history == 0:
+            print('Company without enough history:', len_history)
+            return
 
-        print('history: ', history)
-        print('dmin: ', dmin)
-        print('dmax: ', dmax)
-        print('dists: ', dists)
+        epmin=1e6
+        epmax=-1
+        epsilonl=[]
+        Crl = []
 
-        delta = (dmax-dmin)/10
-        print('delta: ', delta)
+        DIMS = np.arange(3, 12, 1)
 
-        c_r = []
+        for dim in DIMS:
+            self.debug and print("DIM",dim)
 
-        for d in np.arange(dmin, dmax, delta):
-            print('->d', d)
-            # print('Dists TF', (dists < d))
-            print('Dists', (dists < d)*1)
-            print('#Vectors', sum(sum((dists < d)*1)))
-            c_r_i = sum(sum((dists < d)*1))
-            c_r_i = c_r_i / (len_history * (len_history-1) )
-            print('C(r,i)', c_r_i)
-            c_r.append(c_r_i)
+            matrix = np.array([history[0:dim]])
+            for i in np.arange(1, len_history-dim+1, 1):
+                matrix = np.append(matrix, [history[i:i+dim]], axis=0)
 
-        print('C(r)', c_r)
+            dists = np.zeros((matrix.shape[0]-1, matrix.shape[0]-1))
+            # Calculate distances matrix, get dmax and d min
+            for i in range(0,matrix.shape[0]-1):
+                for j in range(0,i+1):
+                    dists[i][j] = np.linalg.norm(matrix[i+1]-matrix[j])
+
+            self.debug and print("dists",dists)
+
+            dmin = np.log10(np.min(dists[dists>0]))
+            dmax = np.log10(np.max(dists))*3
+            delta = (dmax-dmin)/50
+            # delta = (dmax-dmin)/50 #UNCOMENT
+            # epsilon = np.arange(dmin, dmax+delta/10, delta) #UNCOMENT
+            Cd = []
+
+            if len(epsilonl) ==0: #DLELTE
+                epsilonl.append( np.arange(dmin, dmax+delta/10, delta) ) #DLELTE
+
+            epsilon = epsilonl[0] #DELETE
+
+            for d in epsilon:
+                Cd = np.append(Cd,np.sum(dists<=pow(10,d)) - np.sum(dists==0))
+
+            self.debug and print("Cd_pew",Cd)
+            Cd = Cd/(matrix.shape[0]*(matrix.shape[0]-1)/2)
+            self.debug and print("Cd",Cd)
+            Crl.append(np.log10(Cd))
+            # epsilonl.append(epsilon) #UNCOMENT
+            epmax=max(epmax,max(epsilon))
+            epmin=min(epmin,min(epsilon))
+
+        self.debug and print("Crl", Crl)
+
+        subplot(3,1,1)
+        for i in range(0, len(Crl)):
+            plt.plot(np.asarray(epsilonl[0]), Crl[i])
+            # plt.plot(np.asarray(epsilonl[i]), Crl[i])#UNCOMENT
+
+
+        plt.ylabel('C(Epsilon)')
+        plt.xlabel('Epsilon')
+        # plt.xticks(epsilonl)
+        subplot(3,1,2)
+        self.debug and print("min",Crl[0], epsilonl[0])
+        self.debug and print("max", Crl[len(Crl)-1],  epsilonl[0])
+        infinites = sum(np.isinf(Crl[len(Crl)-1]))
+        if (infinites>20):
+            print("Number of inifites high, breaking by:", infinites)
+            return
+        self.debug and print("infinites", infinites)
+        overture = Crl[0]-Crl[len(Crl)-1]
+        plt.plot(np.asarray(epsilonl[0]), overture)
+        plt.ylabel('Range')
+        plt.xlabel('Epsilon')
+
+        subplot(3,1,3)
+        overture_diff = np.diff(overture)
+        epsilon_diff = np.asarray(epsilonl[0][1:len(epsilonl[0])])
+        plt.plot(epsilon_diff, overture_diff)
+        plt.ylabel('Range diff')
+        plt.xlabel('Epsilon')
+
+        self.debug and print("overture_diff: ", overture_diff)
+        indexes=(overture_diff > -0.05) & (overture[1:len(epsilonl[0])] > 0.1)
+
+        self.debug and print("indexes0: ", indexes)
+        # Remove the first points and individual
+        single_count=0
+        for i in range(0, len(indexes)-1):
+            if indexes[i]:
+                single_count += 1
+            else:
+                single_count = 0
+
+            if i<10 or single_count <= 3:
+                indexes[i] = False
+
+        self.debug and print("indexes: ", indexes)
+        self.debug and print("overture_diff[indexes]: ", overture_diff[indexes])
+        self.debug and print("epsilon_diff[indexes]: ", epsilon_diff[indexes])
+        plt.scatter(epsilon_diff[indexes], overture_diff[indexes], color='red')
+
+        print("RESULT? ", sum(indexes)>0, sum(indexes))
+
+        subplot(3,1,1)
+        self.debug and print("Crl[i]: ", Crl[0])
+        self.debug and print("epsilonl indexes: ", epsilonl[0][1:len(epsilonl[0])][indexes])
+        plt.scatter(epsilonl[0][1:len(epsilonl[0])][indexes], Crl[0][1:len(epsilonl[0])][indexes], color='red')
+
+        plt.show()
