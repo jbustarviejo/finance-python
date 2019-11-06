@@ -9,7 +9,7 @@ class Analisys(models.Model):
 
     class Meta:
         verbose_name_plural = 'Analysis'
-        unique_together = ['company', 'degree', 'svm', 'number_of_days_sample']
+        unique_together = ['company', 'kernel', 'svm', 'number_of_days_sample']
 
     company = models.ForeignKey(
         Company,
@@ -17,8 +17,8 @@ class Analisys(models.Model):
         related_name='companies'
     )
 
-    degree = models.CharField(
-        help_text="Grade of the kernel",
+    kernel = models.CharField(
+        help_text="kernel type",
         max_length=100,
         null=True,
         blank=True
@@ -37,6 +37,16 @@ class Analisys(models.Model):
     )
 
     number_of_days_sample = models.IntegerField(
+        null=True,
+        blank=True
+    )
+
+    number_of_train_vectors = models.IntegerField(
+        null=True,
+        blank=True
+    )
+
+    fractal_points = models.IntegerField(
         null=True,
         blank=True
     )
