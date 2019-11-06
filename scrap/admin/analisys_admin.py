@@ -11,3 +11,4 @@ class AnalisysAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_filter = ('kernel', 'svm')
     actions = ['export_as_csv']
     readonly_fields = ('company',)
+    search_fields = ['company__name', 'company__symbol']

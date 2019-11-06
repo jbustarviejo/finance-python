@@ -18,7 +18,7 @@ from config.settings import local as settings
 
 class Command(BaseCommand):
     help = "Analize company SVM data from FT.com. analize_fractal"
-    debug=False
+    debug = False
 
     @transaction.non_atomic_requests
     def handle(self, *args, **kwargs):
@@ -45,8 +45,11 @@ class Command(BaseCommand):
     @transaction.non_atomic_requests
     def analize_company(self):
         time_threshold = timezone.now() - timezone.timedelta(hours=24)
-        # company_analysis = Analisys.objects.get(company__id=2606)
-        company_analysis = Analisys.objects.filter(Q(fractal_points__isnull=True) & Q(rate__gt=0) ).order_by('?').first()
+        if self.debug:
+            company_analysis = Analisys.objects.get(company__id=2606)
+        else:
+            company_analysis = Analisys.objects.filter(Q(fractal_points__isnull=True) & Q(rate__gt=0) ).order_by('?').first()
+
         if not company_analysis:
             return True
 
@@ -123,7 +126,6 @@ class Command(BaseCommand):
 
         if self.debug:
             plt.ylabel('C(Epsilon)')
-        if self.debug:
             plt.xlabel('Epsilon')
         # plt.xticks(epsilonl)
         if self.debug:
@@ -138,12 +140,8 @@ class Command(BaseCommand):
         overture = Crl[0]-Crl[len(Crl)-1]
         if self.debug:
             plt.plot(np.asarray(epsilonl[0]), overture)
-        if self.debug:
             plt.ylabel('Range')
-        if self.debug:
             plt.xlabel('Epsilon')
-
-        if self.debug:
             subplot(3,1,3)
         overture_diff = np.diff(overture)
         epsilon_diff = np.asarray(epsilonl[0][1:len(epsilonl[0])])
@@ -169,15 +167,13 @@ class Command(BaseCommand):
             if i<10 or single_count <= 3:
                 indexes[i] = False
 
-        self.debug and print("indexes: ", indexes)
-        self.debug and print("overture_diff[indexes]: ", overture_diff[indexes])
-        self.debug and print("epsilon_diff[indexes]: ", epsilon_diff[indexes])
         if self.debug:
+            print("indexes: ", indexes)
+            print("overture_diff[indexes]: ", overture_diff[indexes])
+            print("epsilon_diff[indexes]: ", epsilon_diff[indexes])
             plt.scatter(epsilon_diff[indexes], overture_diff[indexes], color='red')
 
         print("RESULT? ", sum(indexes)>0, sum(indexes))
-
-        return sum(indexes)
 
         if self.debug:
             subplot(3,1,1)
@@ -189,3 +185,5 @@ class Command(BaseCommand):
         if self.debug:
             plt.show()
             exit()
+
+        return sum(indexes)
