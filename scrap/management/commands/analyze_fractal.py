@@ -93,7 +93,7 @@ class Command(BaseCommand):
 
             dmin = np.log10(np.min(dists[dists>0]))
             dmax = np.log10(np.max(dists))*3
-            delta = (dmax-dmin)/50
+            delta = (dmax-dmin)/75
             # delta = (dmax-dmin)/50 #UNCOMENT
             # epsilon = np.arange(dmin, dmax+delta/10, delta) #UNCOMENT
             Cd = []
