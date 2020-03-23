@@ -1,6 +1,6 @@
 #Installation on ubuntu
 
-git clone https://github.com/jbustarviejo/scrap-python2.git
+git clone https://github.com/jbustarviejo/finance-django.git
 sudo apt-get update
 sudo apt install python3-pip
 brew install pipenv
@@ -26,3 +26,47 @@ MAC: brew install python3
 
 http://www.statsmodels.org/dev/install.html
 https://machinelearningmastery.com/time-series-forecasting-methods-in-python-cheat-sheet/
+
+* Mac:
+
+The easiest way to install python is just downloading the package from its web.
+```
+sudo easy_install pip3
+pip3 install virtualenv
+brew install pipenv
+```
+
+Then just run:
+
+```
+virtualenv -p python3.8 venv
+source venv/bin/activate
+```
+
+And finally
+
+```
+pipenv install --dev
+```
+
+NOTE: If something goes wrong and a package is not found, try to run this command to clear the cache first:
+
+```
+pipenv lock --clear
+```
+
+Install Django:
+
+```
+python -m pip install Django
+python -m pip install psycopg2-binary
+```
+
+Install postgres from web
+
+
+* To create an **superuser account**, use this command::
+
+ ```
+ $ ./manage.py createsuperuser
+ ```

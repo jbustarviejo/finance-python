@@ -13,7 +13,7 @@ from config.settings import local as settings
 
 class Command(BaseCommand):
     help = "Analize company SVM data from FT.com"
-    debug = False
+    debug = True
 
     @transaction.non_atomic_requests
     def handle(self, *args, **kwargs):
@@ -40,21 +40,31 @@ class Command(BaseCommand):
     @transaction.non_atomic_requests
     def analize_company(self):
         time_threshold = timezone.now() - timezone.timedelta(hours=24)
-        company = Company.objects.filter(Q(analysis_updated_at__isnull=True) | Q(analysis_updated_at__lt=time_threshold) ).order_by('?').first()
+
+        if self.debug:
+            company = Company.objects.filter(id=2653).first()
+        else:
+            company = Company.objects.filter(Q(analysis_updated_at__isnull=True) | Q(analysis_updated_at__lt=time_threshold) ).order_by('?').first()
         if not company:
             return True
 
-        self.optParamsSVR(company)
+        fullAnalysis={}
+        for numberOfTrainVector in range(1,15):
+            fullAnalysis[numberOfTrainVector] = self.optParamsSVR(company, numberOfTrainVector)
 
+        print('fullAnalysis',fullAnalysis)
+        exit()
         company.analysis_updated_at = timezone.now()
-        company.save()
+        if self.debug:
+            exit()
+        else:
+            company.save()
 
-    def optParamsSVR(self, company):
+    def optParamsSVR(self, company, numberOfTrainVectors):
         predictions = []
         repeats = settings.repeats
         kernel = "rbf"
         numberOfDaysSample = 1
-        numberOfTrainVectors = 5
 
         print ("SVR - "+str(company)+" -  Kernel: "+kernel+", sample: "+str(numberOfDaysSample)+", train vectors="+str(numberOfTrainVectors)+", repeats= "+str(repeats))
 
@@ -63,20 +73,22 @@ class Command(BaseCommand):
         if rate is None:
             rate = -1
 
-        analisys, created = Analisys.objects.get_or_create(
-            company=company,
-            kernel=kernel,
-            svm="SVRR",
-            number_of_days_sample=numberOfDaysSample,
-            number_of_train_vectors=numberOfTrainVectors
-        )
+        if not self.debug:
+            analisys, created = Analisys.objects.get_or_create(
+                company=company,
+                kernel=kernel,
+                svm="SVRR",
+                number_of_days_sample=numberOfDaysSample,
+                number_of_train_vectors=numberOfTrainVectors
+            )
 
-        analisys.rate = rate
-        analisys.save()
+            analisys.rate = rate
+            analisys.save()
+        return rate
 
     def getPredictionRate(self, company, kernel, numberOfDaysSample, numberOfTrainVectors, repeats):
         numberOfDaysSample = numberOfDaysSample + 1
-
+        print("===>dta length: ",numberOfDaysSample + numberOfTrainVectors + repeats -1)
         data = company.getHistoryOpen(numberOfDaysSample + numberOfTrainVectors + repeats -1)
         self.debug and print("data= ", data)
 
