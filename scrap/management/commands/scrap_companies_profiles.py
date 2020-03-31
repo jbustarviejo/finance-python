@@ -39,8 +39,7 @@ class Command(BaseCommand):
     @transaction.non_atomic_requests
     def scrapCompaniesInfo(self):
         time_threshold = timezone.now() - timezone.timedelta(hours=24)
-
-        company = Company.objects.filter(Q(profile_updated_at__isnull=False) & Q(incorporated__isnull=True) ).order_by('?').first()
+        company = Company.objects.filter(Q(profile_updated_at__isnull=True) & Q(incorporated__isnull=True) ).order_by('?').first()
         if not company:
             return True
 

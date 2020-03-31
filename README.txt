@@ -16,10 +16,16 @@ Install python3 from python.org
 MAC: brew install python3
 
 #Run all
+./manage.py scrap_currencies
+./manage.py scrap_currencies_info
+./manage.py scrap_currencies_history
+
 ./manage.py scrap_sectors
 ./manage.py scrap_industries
 ./manage.py scrap_companies
+./manage.py scrap_companies_profiles
 ./manage.py scrap_companies_info
+./manage.py scrap_companies_history
 
 
 #Check some predictors
