@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 industry_name = matchingElement.text
                 industry, created = Industry.objects.get_or_create(
                     name=industry_name,
-                    slug=industry_name.replace(" ","-").replace("&","and").lower(),
+                    slug=industry_name.replace(" ","-").replace(",","").replace("&","and").lower(),
                     sector=sector
                 )
                 industry.save()
