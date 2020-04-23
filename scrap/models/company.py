@@ -185,3 +185,10 @@ class Company(models.Model):
     def getHistoryOpen(self, length):
         data =  self.history[-length:]
         return [s['open'] for s in data] #Transform tuples to number array. Take the open
+
+    def getOpenAt(self, date):
+        # History is backward, here we're looking for the most recent value passed a date
+        for entry in self.history:
+            if entry['date'] > date:
+                return entry['open']
+        return None
